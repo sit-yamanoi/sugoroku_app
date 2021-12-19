@@ -1,10 +1,11 @@
-package com.example.app;
+package com.example.app.items;
 
+//
 public class BaseItem {
   private int itemID;
   
-  BaseItem(){
-	  itemID = -1;
+  public BaseItem(){
+	  itemID = 0;
   }
 
   public int getItemID() {
