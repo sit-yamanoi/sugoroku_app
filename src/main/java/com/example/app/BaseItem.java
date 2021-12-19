@@ -1,8 +1,20 @@
 package com.example.app;
 
 public class BaseItem {
-  private int itemId;
+  private int itemID;
+  
+  BaseItem(){
+	  itemID = -1;
+  }
 
-  public String getItemId() {}
-  public String use() {}
+  public int getItemID() {
+	  return itemID;
+  }
+  public String use() {
+	  return "BaseItem";
+  }
+  
+  public String toString() {
+	  return "itemID : "+itemID+"\nresrut : "+use();
+  }
 }
