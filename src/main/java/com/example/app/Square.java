@@ -16,7 +16,22 @@ public class Square {
 		return effectID;
 	}
 	
-	String affectuPlayer(Player p) {
+	String affectPlayer(Player p) {
+		switch(effectID) {
+		case 0: //getItem
+			
+		case 1: //goFoward
+			
+		case 2: //backFoward
+			
+		case 3: //crewRestart
+			
+		case 4: //crewTakeItem
+			
+		case 5: //crewGiveItem
+			
+		}
+		
 		return "";
 	}
 	

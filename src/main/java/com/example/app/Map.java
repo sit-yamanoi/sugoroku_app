@@ -3,8 +3,8 @@ package com.example.app;
 public class Map {
 	Square start = null;
 	Square goal = null;
-	int[][]  mapStr; //マップ構造 [分岐スタート地点][合流地点][コマの効果][...]の順 0,1列目は全て0
-	int[][] mapLen; //長い方のルートの長さ [メインの長さ][分岐の長さ][分岐の長さ]の順
+	int[][] mapStr; //マップ構造 [分岐スタート地点][合流地点][コマの効果][...]の順 0,1列目は全て0
+	int[][] mapLen; //ルートの長さ [メインの長さ][分岐の長さ][分岐の長さ]の順
 	
 	Square getstart() {
 		return start;
@@ -25,7 +25,6 @@ public class Map {
 		Square prev = null; //前のマス
 		Square forkStart = null; //分岐開始点
 		Square forkGoal = null; //分岐終了点
-		prev = forkStart;
 		
 		do {
 			fs = mapStr[mapnum][m];
@@ -69,6 +68,9 @@ public class Map {
 				current.prev1 = forkGoal;
 				forkGoal.next0 = current;
 			}
+			
+			r++;
+			
 		}while(m < mapStr[mapnum].length);
 	}
 }
