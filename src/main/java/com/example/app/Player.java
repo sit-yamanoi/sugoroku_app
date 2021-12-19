@@ -1,38 +1,87 @@
 package com.example.app;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class Player {
-	private String userId = "";
-  private ArrayList<BaseItem> items;
-  private int state;
-  private Square position;
-  private int nextDiceNum;
-  private boolean goalFlag;
+	private String userID;
+	private ArrayList<BaseItem> items;
+	private int state;
+	private Square position;
+	private int nextDiceNum;
+	private boolean goalFlag;
 
-  public String getUserId() {}
+	public Player(String userID) {
+		this.userID = userID;
+		this.items = new ArrayList<>();
+		this.state = 0;
+		this.nextDiceNum = 1;
+		this.goalFlag = false;
+	}
 
-  public BaseItem getItem(int pos) {}
+	public String getUserID() {
+		return this.userID;
+	}
 
-  public void setState(int state) {}
+	public BaseItem getItem(int pos) {
+		BaseItem item = null;
+		if (this.items.size() > pos) {
+			item = this.items.get(pos);
+		}
+		return item;
+	}
 
-  public int getState() {}
+	public void setState(int state) {
+		if (state <= 4) {
+			this.state = state;
+		}
+	}
 
-  public Square getPos() {}
+	public int getState() {
+		return this.state;
+	}
 
-  public void setNextDiceNum(int num) {}
+	public Square getPos() {
+		return this.position;
+	}
 
-  public int getNextDiceNum() {}
+	public void setPos(Square position) {
+		this.position = position;
+	}
 
-  public int moveForward() {}
+	public void setNextDiceNum(int num) {
+		if (num > 0) {
+			this.nextDiceNum = num;
+		}
+	}
 
-  public void addItem (BaseItem item) {}
+	public int getNextDiceNum() {
+		return this.nextDiceNum;
+	}
 
-  public void deleteItem(int pos) {}
+	public int moveForward() {
+		while(this.nextDiceNum > 0) {
+			if (this.position.next1 != null) {
+				break;
+			}
+			this.position = this.position.next0;
+			this.nextDiceNum--;
+		}
+		return this.nextDiceNum;
+	}
 
-  public void setGoalFlag() {}
+	public void addItem(BaseItem item) {
+		this.items.add(item);
+	}
 
-  public boolean getGoalFlag() {}
+	public void deleteItem(int pos) {
+		this.items.remove(pos);
+	}
+
+	public void setGoalFlag(boolean flag) {
+		this.goalFlag = flag;
+	}
+
+	public boolean getGoalFlag() {
+		return this.goalFlag;
+	}
 }
