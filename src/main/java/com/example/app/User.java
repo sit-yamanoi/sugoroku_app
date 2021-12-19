@@ -6,12 +6,18 @@ public class User {
 	int status;
 	String gameID = "";
 	
+	User(String uID,String gID){
+		userID = uID;
+		status = 0;
+		gameID = gID;
+	}
+	
 	String getID() {
 		return userID;
 	}
 	
 	void setWebSocketID(String ID){
-		
+		webSocketID = ID;
 	}
 	
 	String getWebSocketID() {
@@ -19,7 +25,7 @@ public class User {
 	}
 	
 	void setGameID(String ID) {
-		
+		gameID = ID;
 	}
 	
 	String getGameID() {
@@ -27,11 +33,14 @@ public class User {
 	}
 	
 	void setStatus(int number) {
-		
+		status = number;
 	}
 	
 	int getStatus() {
 		return status;
+	}
+	public String toString() {
+		return "userID : "+userID+"\nwebSocketID : "+webSocketID+"\nstatus : "+status+"\ngameID : "+gameID+"\n";
 	}
 }
 
