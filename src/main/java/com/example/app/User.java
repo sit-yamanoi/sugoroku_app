@@ -40,7 +40,7 @@ public class User {
 		return status;
 	}
 	public String toString() {
-		return "userID : "+userID+"\nwebSocketID : "+webSocketID+"\nstatus : "+status+"\ngameID : "+gameID+"\n";
+		return "userID : "+userID+"\nwebSocketID : "+webSocketID+"\nstatus : "+status+"\ngameID : "+gameID;
 	}
 }
 
