@@ -3,8 +3,8 @@ package com.example.app;
 public class Map {
 	Square start = null;
 	Square goal = null;
-	int[][]  mapStr; //マップ構造
-	int[][] mapLen; //長い方のルートの長さ
+	int[][]  mapStr; //マップ構造 分岐スタート地点,合流地点,長さの順 0,1列目は全て0
+	int[][] mapLen; //長い方のルートの長さ メイン,分岐,分岐の順
 	
 	Square getstart() {
 		return start;
