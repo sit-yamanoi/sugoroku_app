@@ -58,15 +58,23 @@ public class Player {
 		return this.nextDiceNum;
 	}
 
-	public int moveForward() {
+	public int move() {
 		while(this.nextDiceNum > 0) {
 			if (this.position.next1 != null) {
 				break;
 			}
-			this.position = this.position.next0;
+			this.moveForward();
 			this.nextDiceNum--;
 		}
 		return this.nextDiceNum;
+	}
+	
+	public void moveForward() {
+		this.position = this.position.next0;
+	}
+	
+	public void moveBackward() {
+		this.position = this.position.prev0;
 	}
 
 	public void addItem(BaseItem item) {
