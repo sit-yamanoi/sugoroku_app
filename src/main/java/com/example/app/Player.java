@@ -2,6 +2,8 @@ package com.example.app;
 
 import java.util.ArrayList;
 
+import com.example.app.items.BaseItem;
+
 public class Player {
 	private String userID;
 	private ArrayList<BaseItem> items;
@@ -58,15 +60,15 @@ public class Player {
 		return this.nextDiceNum;
 	}
 
-	public int move() {
-		while(this.nextDiceNum > 0) {
+	public int move(int num) {
+		int i;
+		for(i = num; i > 0; i--) {
 			if (this.position.next1 != null) {
 				break;
 			}
 			this.moveForward();
-			this.nextDiceNum--;
 		}
-		return this.nextDiceNum;
+		return i;
 	}
 	
 	public void moveForward() {
