@@ -24,6 +24,7 @@ public class Square {
 		int i;
 		int r = 0;
 		Random random = new Random();
+		random.setSeed(System.currentTimeMillis());
 		switch(effectID) {
 		case 1: //getItem
 			r = random.nextInt(7);
