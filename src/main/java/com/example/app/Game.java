@@ -55,10 +55,17 @@ public class Game {
 	}
 	
 	void mainProcess() {
-		
+		//さいころ振る
+		//駒進移動
+			//分岐入った場合selectRoute呼び出し
+			//分岐後の進める分移動
+		//マスの効果発動
+			//進むor戻る効果だった場合コマ移動
+				//分岐到達した場合selectRoute呼び出し
+		//次ターンにする
 	}
 	
-	void selectRoute(Player p, int way) {
+	void selectRoute(Player p) {
 		
 	}
 	
