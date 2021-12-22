@@ -19,13 +19,15 @@ public class Square {
 		return effectID;
 	}
 	
-	String affectPlayer(Player p, ArrayList<Player> players, Square start) {
+	int affectPlayer(Player p, ArrayList<Player> players, Square start) {
 		int s = players.size();
 		int i;
 		int r = 0;
 		Random random = new Random();
 		random.setSeed(System.currentTimeMillis());
 		switch(effectID) {
+		case 0:
+			return 1000;
 		case 1: //getItem
 			r = random.nextInt(7);
 			p.getItem(r);
@@ -33,7 +35,7 @@ public class Square {
 		case 2: //goFoward
 			r = random.nextInt(3);
 			//TODO 進む処理はどこに
-			p.moveForward(r+1);
+			return r;
 			
 		case 3: //backFoward
 			//TODO playerクラスの戻る動作の定義
@@ -58,8 +60,6 @@ public class Square {
 				players.get(i).getItem(0);
 			}				
 		}
-		
-		return "";
 	}
 	
 }
