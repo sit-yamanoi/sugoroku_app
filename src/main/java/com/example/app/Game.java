@@ -11,7 +11,7 @@ public class Game {
 	ArrayList<Integer> rank = new ArrayList<>();
 	ArrayList<Map> maps = new ArrayList<>();
 	
-	public Game(String gID;ArrayList<User> userList){
+	public Game(String gID, ArrayList<User> userList){
 		int i;
 		
 		this.gameID = gID;
