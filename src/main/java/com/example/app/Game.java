@@ -55,17 +55,22 @@ public class Game {
 	}
 	
 	void mainProcess() {
+		//effectDone 初期化
 		//さいころ振る
-		//駒進移動
-			//分岐入った場合selectRoute呼び出し
-			//分岐後の進める分移動
+		//駒移動
+			//分岐入った場合分岐json送信
 		//マスの効果発動
+		//effectDone = 1
 			//進むor戻る効果だった場合コマ移動
-				//分岐到達した場合selectRoute呼び出し
+				//分岐到達した場合分岐json送信
 		//次ターンにする
 	}
 	
-	void selectRoute(Player p) {
+	void selectRoute(Player p, int way) {
+		//駒移動
+			//分岐入った場合json送信
+		//effectID参照
+			//effectID == 0の場合マス効果発動
 		
 	}
 	
