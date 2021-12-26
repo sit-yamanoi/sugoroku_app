@@ -1,9 +1,14 @@
 package com.example.app.items;
 
-public class ItemNtimes extends BaseItem {
+public class ItemDecideDiceNum extends BaseItem {
 
-	public ItemNtimes() {
-		// TODO 自動生成されたコンストラクター・スタブ
+	public ItemDecideDiceNum() {
+		setItemID(1);
+	}
+
+	@Override
+	public String use() {
+		return null;
 	}
 
 }

@@ -1,19 +1,17 @@
 package com.example.app.items;
 
 //
-public class BaseItem {
+abstract class BaseItem {
   private int itemID;
   
-  public BaseItem(){
-	  itemID = 0;
+  public void setItemID(int n) {
+	  itemID = n;
   }
-
+  
   public int getItemID() {
 	  return itemID;
   }
-  public String use() {
-	  return "BaseItem";
-  }
+  abstract public String use();
   
   public String toString() {
 	  return "itemID : "+itemID+"\nresrut : "+use();
