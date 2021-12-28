@@ -1,9 +1,22 @@
 package com.example.app.items;
 
-public class ItemNtimes extends BaseItem {
+import java.util.ArrayList;
 
-	public ItemNtimes() {
-		// TODO 自動生成されたコンストラクター・スタブ
+import com.example.app.Player;
+
+public class ItemDecideDiceNum extends BaseItem {
+
+	public ItemDecideDiceNum() {
+		this.setItemID(0);
+	}
+
+	@Override
+	public String use(int value , Player p1 , ArrayList<Player> playerList) {
+		String result = "ItemDecideDiceNum";
+		p1.setNextDiceNum(value);
+		p1.setState(3);
+		result += ",done";
+		return result;
 	}
 
 }
