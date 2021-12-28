@@ -3,6 +3,7 @@ package com.example.app;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.example.app.items.BaseItem;
 public class Square {
 	Square prev0 = null;
 	Square prev1 = null;
@@ -28,7 +29,7 @@ public class Square {
 			return 0;
 			
 		case 1: //getItem
-			p.addItem(baseItem.generateItem());
+			p.addItem(BaseItem.generateItem());
 			return 0;
 			
 		case 2: //goFoward
@@ -54,7 +55,7 @@ public class Square {
 		case 6: //crewGiveItem	
 			for(Player op : players) {
 				r = random.nextInt(5);
-				op.addItem(baseItem.generateItem());
+				op.addItem(BaseItem.generateItem());
 			}
 			return 0;
 			
