@@ -7,7 +7,7 @@ import com.example.app.Player;
 public class ItemHalf extends BaseItem {
 
 	public ItemHalf() {
-		this.setItemID(3);
+		this.setItemID(2);
 	}
 	
 	public String use(int value , Player p1 , ArrayList<Player> playerList) {

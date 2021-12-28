@@ -7,7 +7,7 @@ import com.example.app.Player;
 public class ItemNtimes extends BaseItem {
 
 	public ItemNtimes() {
-		this.setItemID(4);
+		this.setItemID(3);
 	}
 
 	@Override

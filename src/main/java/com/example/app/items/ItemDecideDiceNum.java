@@ -7,7 +7,7 @@ import com.example.app.Player;
 public class ItemDecideDiceNum extends BaseItem {
 
 	public ItemDecideDiceNum() {
-		this.setItemID(1);
+		this.setItemID(0);
 	}
 
 	@Override

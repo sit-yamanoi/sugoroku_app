@@ -8,7 +8,7 @@ import com.example.app.Square;
 public class ItemSwitchPos extends BaseItem {
 
 	public ItemSwitchPos() {
-		this.setItemID(5);
+		this.setItemID(4);
 	}
 	
 	@Override

@@ -7,7 +7,7 @@ import com.example.app.Player;
 public class ItemDefence extends BaseItem {
 
 	public ItemDefence() {
-		this.setItemID(2);
+		this.setItemID(1);
 	}
 	
 	public String use(int value , Player p1 , ArrayList<Player> playerList) {
