@@ -20,46 +20,49 @@ public class Square {
 	}
 	
 	int affectPlayer(Player p, ArrayList<Player> players, Square start) {
-		int s = players.size();
-		int i;
 		int r = 0;
 		Random random = new Random();
 		random.setSeed(System.currentTimeMillis());
 		switch(effectID) {
 		case 0:
-			return 1000;
+			return 0;
+			
 		case 1: //getItem
-			r = random.nextInt(7);
-			p.getItem(r);
+			p.addItem(baseItem.generateItem());
+			return 0;
 			
 		case 2: //goFoward
 			r = random.nextInt(3);
-			//TODO 進む処理はどこに
-			return r;
+			return r+1;
 			
 		case 3: //backFoward
-			//TODO playerクラスの戻る動作の定義
-			//TODO 戻る数
-			r = random.nextInt(3);
-			p.moveBackword(r+1);
+			r = random.nextInt(2);
+			return -r-1;
 			
 		case 4: //crewRestart
-			for(i = 0; i < s; i++) {
-				players.get(i).setPos(start);
+			for(Player op : players) {
+				op.setPos(start);
 			}
+			return 0;
 			
 		case 5: //crewTakeItem
-			
-			for(i = 0; i < s; i++) {
-				players.get(i).deleteItem(0);
-			}			
+			for(Player op : players) {
+				op.deleteItem(0);
+			}
+			return 0;
 			
 		case 6: //crewGiveItem	
-			for(i = 0; i < s; i++) {
-				r = random.nextInt(7);
-				players.get(i).getItem(0);
-			}				
+			for(Player op : players) {
+				r = random.nextInt(5);
+				op.addItem(baseItem.generateItem());
+			}
+			return 0;
+			
+		case 7: //振り出しに戻る
+			p.setPos(start);
+			return 0;
 		}
+		return 0;
 	}
 	
 }
