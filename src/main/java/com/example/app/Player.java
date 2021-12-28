@@ -2,6 +2,8 @@ package com.example.app;
 
 import java.util.ArrayList;
 
+import com.example.app.items.BaseItem;
+
 
 public class Player {
 	private String userID;
@@ -47,13 +49,13 @@ public class Player {
 		this.position = position;
 	}
 
-	public void setNextDiceNum(int num) {
+	public void setMoveRemainNum(int num) {
 		if (num > 0) {
 			this.moveRemainNum = num;
 		}
 	}
 
-	public int getNextDiceNum() {
+	public int getMoveRemainNum() {
 		return this.moveRemainNum;
 	}
 
@@ -85,11 +87,13 @@ public class Player {
 	}
 
 	public void addItem(BaseItem item) {
-		this.items.add(item);
+		if (this.items.size() < 3) {
+			this.items.add(item);
+		}
 	}
 
 	public void deleteItem(int pos) {
-		if (this.items.len() - 1 >= pos) {
+		if (this.items.size() - 1 >= pos) {
 			this.items.remove(pos);
 		}
 	}

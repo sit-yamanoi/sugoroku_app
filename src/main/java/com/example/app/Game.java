@@ -2,20 +2,20 @@ package com.example.app;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
+
+import com.example.app.items.BaseItem;
 
 public class Game {
 	String gameID = "";
 	ArrayList<Player> players = new ArrayList<>();
 	ArrayList<User> users = new ArrayList<>();
-	ArrayList<Integer> order = new ArrayList<>();
 	ArrayList<Player> rank = new ArrayList<>();
-	ArrayList<Map> maps = new ArrayList<>();
+	GameMap map;
 	int turn;
-	Map nowMap;
+	boolean effectDone;
 	
 	public Game(String gID, ArrayList<User> userList){
-		int i;
-
 		this.gameID = gID;
 		
 		//ユーザーリストを読み込み
@@ -32,7 +32,8 @@ public class Game {
 		setOrder();
 
 		//map初期化
-		
+		this.map = new GameMap();
+		this.turn = 0;
 	}
 	
 	
@@ -49,22 +50,30 @@ public class Game {
 	}
 	
 	void setOrder(){
-		for(int i=0; i<users.size(); i++) {
-			this.order.add(i);
-		}
-		Collections.shuffle(order);
+		Collections.shuffle(this.players);
 	}
 	
 	void mainProcess() {
+		Player targetPlayer = this.players.get(this.turn);
 		//effectDone 初期化
+	    this.effectDone = false;
 		//さいころ振る
+	    int dice = rollDice();
 		//駒移動
-			//分岐入った場合分岐json送信
-		//マスの効果発動
-		//effectDone = 1
-			//進むor戻る効果だった場合コマ移動
-				//分岐到達した場合分岐json送信
+	    int remainNum = targetPlayer.move(dice);
+		//分岐入った場合分岐json送信
+	    if (remainNum > 0) {
+			//json送信処理
+	    	return;
+	    } 
+
+	    if (!this.effectDone) {
+			//マスの効果発動
+	    	squareEffect(targetPlayer);
+	    }
+
 		//次ターンにする
+	    takeNextTurn();
 	}
 	
 	void selectRoute(Player p, int way) {
@@ -74,35 +83,74 @@ public class Game {
 		}else {
 			p.setPos(pos.next0);
 		}
-
+		int remainNum = p.getMoveRemainNum();
 		//駒移動
-			//分岐入った場合json送信
-		//effectID参照
-			//effectID == 0の場合マス効果発動
-
+		p.move(remainNum);
+	    if (!this.effectDone) {
+			//マスの効果発動
+	    	squareEffect(p);
+	    }
+	    
+	    if (this.turn == this.players.indexOf(p)) {
+			//次ターンにする
+		    takeNextTurn();
+	    }
 	}
 	
-	void useItem(Player p, int pos) {
+	void squareEffect(Player p) {
+	    Square square = p.getPos();
+	    int effectResult = square.affectPlayer(p, this.players, this.map.getstart());
+	    this.effectDone = true;
+		//進むor戻る効果だった場合コマ移動
+	    if (effectResult != 0) {
+		    int remainNum = p.move(effectResult);
+			//分岐入った場合分岐json送信
+		    if (remainNum > 0) {
+				//json送信処理
+		    } 
+	    }
+	}
+	
+	int rollDice() {
+		Random random = new Random();
+		int result = random.nextInt(6);
+		result++;
+		return result;
+	}
+	
+	void useItem(Player p, int pos, int value) {
 		BaseItem item = p.getItem(pos);
-		item.use();
+		item.use(value, p, this.players);
 		p.deleteItem(pos);
 	}
 	
 	void displayResult() {
-		
+		//json送信処理
 	}
 	
 	void endMatch() {
-		
+		//json送信処理
 	}
+
 	
 	void restartGame() {
+		this.players = new ArrayList<>();
 		
+		for (User user: this.users) {
+			Player player = new Player(user.getID());
+			this.players.add(player);
+		}
+		//順番を決定
+		setOrder();
+		
+		//map初期化
+		this.map = new GameMap();
+		this.turn = 0;
 	}
 	
 	void takeNextTurn() {
-		if(this.turn == this.users.size())   {
-			this.turn = 1;
+		if(this.turn == this.players.size() - 1)   {
+			this.turn = 0 ;
 		}else {
 			this.turn++;
 		}
@@ -112,11 +160,8 @@ public class Game {
 		return true;
 	}
 	
-	void changeMap() {
-		
-	}
-	
 	void addRank(Player player) {
 		this.rank.add(player);
 	}
+
 }

@@ -1,6 +1,6 @@
 package com.example.app;
 
-public class Map {
+public class GameMap {
 	Square start = null;
 	Square goal = null;
 	int[][] mapStr; //マップ構造 [分岐スタート地点][合流地点][コマの効果][...]の順 0,1列目は全て0
