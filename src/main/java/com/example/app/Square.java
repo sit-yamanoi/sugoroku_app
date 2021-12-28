@@ -28,8 +28,7 @@ public class Square {
 			return 0;
 			
 		case 1: //getItem
-			r = random.nextInt(5);
-			p.addItem(r);
+			p.addItem(baseItem.generateItem());
 			return 0;
 			
 		case 2: //goFoward
@@ -55,7 +54,7 @@ public class Square {
 		case 6: //crewGiveItem	
 			for(Player op : players) {
 				r = random.nextInt(5);
-				op.addItem(r);
+				op.addItem(baseItem.generateItem());
 			}
 			return 0;
 			
