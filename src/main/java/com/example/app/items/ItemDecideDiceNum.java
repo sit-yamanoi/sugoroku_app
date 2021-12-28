@@ -1,14 +1,22 @@
 package com.example.app.items;
 
+import java.util.ArrayList;
+
+import com.example.app.Player;
+
 public class ItemDecideDiceNum extends BaseItem {
 
 	public ItemDecideDiceNum() {
-		setItemID(1);
+		this.setItemID(0);
 	}
 
 	@Override
-	public String use() {
-		return null;
+	public String use(int value , Player p1 , ArrayList<Player> playerList) {
+		String result = "ItemDecideDiceNum";
+		p1.setNextDiceNum(value);
+		p1.setState(3);
+		result += ",done";
+		return result;
 	}
 
 }
