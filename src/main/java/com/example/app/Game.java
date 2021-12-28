@@ -8,12 +8,12 @@ public class Game {
 	ArrayList<Player> players = new ArrayList<>();
 	ArrayList<User> users = new ArrayList<>();
 	ArrayList<Integer> order = new ArrayList<>();
-	ArrayList<Integer> rank = new ArrayList<>();
+	ArrayList<Player> rank = new ArrayList<>();
 	ArrayList<Map> maps = new ArrayList<>();
+	int turn;
+	Map nowMap;
 	
-	public Game(String gID;ArrayList<User> userList){
-		int i;
-		
+	public Game(String gID, ArrayList<User> userList){		
 		this.gameID = gID;
 		
 		//ユーザーリストを読み込み
@@ -22,14 +22,13 @@ public class Game {
 		//プレイヤーリスト作成
 		for(User user : userList) {
 			//プレイヤーを作成
+			Player player = new Player(user.getID());
+			this.players.add(player);
 		}
 		
 		//順番を決定
 		setOrder();
-		//rank初期化
-		for(i=0;i<users.size();i++) {
-			rank.add(1);
-		}
+
 		//map初期化
 		
 	}
@@ -48,7 +47,7 @@ public class Game {
 	}
 	
 	void setOrder(){
-		for(i=0;i<users.size();i++) {
+		for(int i=0; i<users.size(); i++) {
 			this.order.add(i);
 		}
 		Collections.shuffle(order);
@@ -65,12 +64,19 @@ public class Game {
 		//次ターンにする
 	}
 	
-	void selectRoute(Player p) {
-		
+	void selectRoute(Player p, int way) {
+		Square pos = p.getPos();
+		if(way == 1) {
+			p.setPos(pos.next1);
+		}else {
+			p.setPos(pos.next0);
+		}
 	}
 	
 	void useItem(Player p, int pos) {
-		
+		BaseItem item = p.getItem(pos);
+		item.use();
+		p.deleteItem(pos);
 	}
 	
 	void displayResult() {
@@ -86,7 +92,11 @@ public class Game {
 	}
 	
 	void takeNextTurn() {
-		
+		if(this.turn == this.users.size())   {
+			this.turn = 1;
+		}else {
+			this.turn++;
+		}
 	}
 	
 	boolean castChat(String str) {
@@ -97,7 +107,7 @@ public class Game {
 		
 	}
 	
-	void addRank() {
-		
+	void addRank(Player player) {
+		this.rank.add(player);
 	}
 }
