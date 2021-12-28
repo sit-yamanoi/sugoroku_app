@@ -25,20 +25,20 @@ public class Square {
 		random.setSeed(System.currentTimeMillis());
 		switch(effectID) {
 		case 0:
-			return 1000;
+			return 0;
 			
 		case 1: //getItem
-			r = random.nextInt(7);
-			p.getItem(r);
+			r = random.nextInt(5);
+			p.addItem(r);
 			return 0;
 			
 		case 2: //goFoward
 			r = random.nextInt(3);
-			return r;
+			return r+1;
 			
 		case 3: //backFoward
-			r = random.nextInt(3);
-			return r;
+			r = random.nextInt(2);
+			return -r-1;
 			
 		case 4: //crewRestart
 			for(Player op : players) {
@@ -54,8 +54,8 @@ public class Square {
 			
 		case 6: //crewGiveItem	
 			for(Player op : players) {
-				r = random.nextInt(7);
-				op.getItem(r);
+				r = random.nextInt(5);
+				op.addItem(r);
 			}
 			return 0;
 			
