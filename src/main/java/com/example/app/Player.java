@@ -2,21 +2,20 @@ package com.example.app;
 
 import java.util.ArrayList;
 
-import com.example.app.items.BaseItem;
 
 public class Player {
 	private String userID;
 	private ArrayList<BaseItem> items;
 	private int state;
 	private Square position;
-	private int nextDiceNum;
+	private int moveRemainNum;
 	private boolean goalFlag;
 
 	public Player(String userID) {
 		this.userID = userID;
 		this.items = new ArrayList<>();
 		this.state = 0;
-		this.nextDiceNum = 1;
+		this.moveRemainNum = 0;
 		this.goalFlag = false;
 	}
 
@@ -33,9 +32,7 @@ public class Player {
 	}
 
 	public void setState(int state) {
-		if (state <= 4) {
-			this.state = state;
-		}
+		this.state = state;
 	}
 
 	public int getState() {
@@ -52,16 +49,24 @@ public class Player {
 
 	public void setNextDiceNum(int num) {
 		if (num > 0) {
-			this.nextDiceNum = num;
+			this.moveRemainNum = num;
 		}
 	}
 
 	public int getNextDiceNum() {
-		return this.nextDiceNum;
+		return this.moveRemainNum;
 	}
 
 	public int move(int num) {
 		int i;
+		if(num < 0) {
+			for(i = num; i < 0; i++) {
+				if (this.position.prev1 != null) {
+					break;
+				}
+				this.moveBackward();
+			}
+		}
 		for(i = num; i > 0; i--) {
 			if (this.position.next1 != null) {
 				break;
@@ -84,7 +89,9 @@ public class Player {
 	}
 
 	public void deleteItem(int pos) {
-		this.items.remove(pos);
+		if (this.items.len() - 1 >= pos) {
+			this.items.remove(pos);
+		}
 	}
 
 	public void setGoalFlag(boolean flag) {
