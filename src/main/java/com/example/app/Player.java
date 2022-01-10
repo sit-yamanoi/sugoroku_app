@@ -73,6 +73,12 @@ public class Player {
 			if (this.position.next1 != null) {
 				break;
 			}
+			//テスト用
+			if(this.position.next0 == null) {
+				setGoalFlag(true);
+				return 0;
+			}
+			//テストここまで
 			this.moveForward();
 		}
 		return i;

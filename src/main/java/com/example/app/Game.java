@@ -14,6 +14,7 @@ public class Game {
 	GameMap map;
 	int turn;
 	boolean effectDone;
+	int dice;
 	
 	public Game(String gID, ArrayList<User> userList){
 		this.gameID = gID;
@@ -34,6 +35,14 @@ public class Game {
 		//map初期化
 		this.map = new GameMap();
 		this.turn = 0;
+		
+		
+		//テスト用
+		//スタートに配置
+		for(Player p : players) {
+			p.setPos(map.start);
+		}
+		
 	}
 	
 	
@@ -53,18 +62,19 @@ public class Game {
 		Collections.shuffle(this.players);
 	}
 	
-	void mainProcess() {
+	//テスト用に返り値追加, dice変数をグローバルに
+	int mainProcess() {
 		Player targetPlayer = this.players.get(this.turn);
 		//effectDone 初期化
 	    this.effectDone = false;
 		//さいころ振る
-	    int dice = rollDice();
+	    dice = rollDice();
 		//駒移動
 	    int remainNum = targetPlayer.move(dice);
 		//分岐入った場合分岐json送信
 	    if (remainNum > 0) {
 			//json送信処理
-	    	return;
+	    	return 1;
 	    } 
 
 	    if (!this.effectDone) {
@@ -74,6 +84,7 @@ public class Game {
 
 		//次ターンにする
 	    takeNextTurn();
+	    return 0;
 	}
 	
 	void selectRoute(Player p, int way) {
@@ -164,4 +175,14 @@ public class Game {
 		this.rank.add(player);
 	}
 
+	//テスト用
+	int checkGoal() {
+		int g = 0;
+		for(Player p : players) {
+			if(p.getGoalFlag()) {
+				g++;
+			}
+		}
+		return g;
+	}
 }

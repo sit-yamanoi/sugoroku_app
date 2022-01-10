@@ -1,10 +1,17 @@
 package com.example.app;
+import java.util.Arrays;
 
 public class GameMap {
 	Square start = null;
 	Square goal = null;
 	int[] mapStr; //マップ構造 [分岐スタート地点][合流地点][コマの効果][...]の順 0,1列目は全て0
 	int[] mapLen; //ルートの長さ [メインの長さ][分岐の長さ][分岐の長さ]の順
+	
+	GameMap(){
+		mapStr = Arrays.copyOf(MapStr.str, 38);
+		mapLen = Arrays.copyOf(MapStr.len, 2);
+		genSquare();
+	}
 	
 	Square getstart() {
 		return start;
@@ -14,7 +21,7 @@ public class GameMap {
 		return goal;
 	}
 	
-	void genSquare(int mapnum) { //mapnum:マップ番号
+	void genSquare() { //mapnum:マップ番号
 		int m = 0; //配列カウント
 		int i = 0; //ループ用
 		int j = 0; //メインルートマスカウント
@@ -34,13 +41,14 @@ public class GameMap {
 			
 			
 			if(fs == 0) {
-				start = new Square(mapStr[m]);
+				start = new Square(mapStr[m]);				
 				prev = start;
 			}else {
 				forkStart = new Square(mapStr[m]);
 				prev = forkStart;
 			}
 			
+			m++;
 			
 			for(j = 1; j < mapLen[r]; m++, j++) {
 				current = new Square(mapStr[m]);
@@ -62,6 +70,7 @@ public class GameMap {
 				}
 				current.next1 = forkStart;
 				forkStart.prev0 = current;
+				current = start;
 				for(i = 0; i < fg; i++) {
 					current = current.next0;
 				}
@@ -70,7 +79,6 @@ public class GameMap {
 			}
 			
 			r++;
-			
 		}while(m < mapStr.length);
 	}
 }
