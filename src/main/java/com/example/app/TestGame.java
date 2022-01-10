@@ -28,7 +28,9 @@ public class TestGame {
 		Game game = new Game("1234", userlist);
 		System.out.println("newgame:" + game.getGameID());
 		System.out.println("GameStart");
+		int order = 0;
 		while(game.checkGoal()<1) {
+			System.out.println(order);
 			p = game.players.get(game.turn);
 			System.out.println("turn"+game.turn + " player:"+ p.getUserID());
 			rm = game.mainProcess();
@@ -41,6 +43,7 @@ public class TestGame {
 			if(game.checkGoal() != 0) {
 				System.out.println("GOAL!!");
 			}
+			order++;
 		}
 	}
 }

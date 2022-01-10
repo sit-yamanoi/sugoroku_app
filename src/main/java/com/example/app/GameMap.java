@@ -8,8 +8,8 @@ public class GameMap {
 	int[] mapLen; //ルートの長さ [メインの長さ][分岐の長さ][分岐の長さ]の順
 	
 	GameMap(){
-		mapStr = Arrays.copyOf(MapStr.str, 38);
-		mapLen = Arrays.copyOf(MapStr.len, 2);
+		mapStr = Arrays.copyOf(MapStr.str, 99);
+		mapLen = Arrays.copyOf(MapStr.len, 3);
 		genSquare();
 	}
 	
@@ -38,7 +38,6 @@ public class GameMap {
 			m++;
 			fg = mapStr[m];
 			m++;
-			
 			
 			if(fs == 0) {
 				start = new Square(mapStr[m]);				
