@@ -37,7 +37,7 @@ public class Game {
 		this.turn = 0;
 		
 		
-		//テスト用
+		//TODO テスト用
 		//スタートに配置
 		for(Player p : players) {
 			p.setPos(map.start);
@@ -61,7 +61,7 @@ public class Game {
 		Collections.shuffle(this.players);
 	}
 	
-	//テスト用に返り値追加, dice変数をグローバルに
+	//TODO テスト用に返り値追加, dice変数をグローバルに
 	int mainProcess() {
 		Player targetPlayer = this.players.get(this.turn);
 		//effectDone 初期化
@@ -174,7 +174,7 @@ public class Game {
 		this.rank.add(player);
 	}
 
-	//テスト用
+	//TODO テスト用
 	int checkGoal() {
 		int g = 0;
 		for(Player p : players) {
