@@ -43,6 +43,3 @@ public class User {
 		return "userID : "+userID+"\nwebSocketID : "+webSocketID+"\nstatus : "+status+"\ngameID : "+gameID;
 	}
 }
-
-//test2
-//test3
