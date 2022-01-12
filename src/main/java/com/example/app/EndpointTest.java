@@ -100,7 +100,7 @@ public class EndpointTest {
 	        			currentGame.addRestart(currentUser, res);//全員が同意したかはGameクラスで判別
 	        		}else {
 	        			if(currentGame.getIsFinished()) {
-	        			currentGame.endGame();
+	        			currentGame.endMatch();
 	        			GameList.remove(currentUser.getGameID());
 	        			currentGame = null;
 	        			}
