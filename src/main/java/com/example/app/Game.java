@@ -1,26 +1,28 @@
 package com.example.app;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import com.example.app.items.BaseItem;
-
 import org.json.JSONObject;
+
+import com.example.app.items.BaseItem;
 
 public class Game {
 	String gameID = "";
 	ArrayList<Player> players = new ArrayList<>();
 	ArrayList<User> users = new ArrayList<>();
 	ArrayList<Player> rank = new ArrayList<>();
+	HashMap<String, Boolean> restart;
 	Player winPlayer;
 	GameMap map;
 	int turn;
 	boolean effectDone;
 	int dice;
-  boolean isFinised = true;
+	boolean isFinished = false;
 	
 	public Game(String gID, ArrayList<User> userList){
 		this.gameID = gID;
@@ -34,7 +36,7 @@ public class Game {
 			Player player = new Player(user.getID());
 			this.players.add(player);
 		}
-		
+		restart = new HashMap<>();
 		//順番を決定
 		setOrder();
 
@@ -94,7 +96,7 @@ public class Game {
       jsonMap.put("NextDiceNum", remainNum);
       // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
         String jsonStr = generateJSON(jsonMap);
-        sendToAllUsers(jsonStr)
+        sendToAllUsers(jsonStr);
 	    	return 1;
 	    } 
 	    
@@ -122,7 +124,7 @@ public class Game {
 
       //ゴールした場合
       if (this.isFinished) {
-        endGame();
+        endMatch();
       }
 		//次ターンにする
 	    takeNextTurn();
@@ -192,7 +194,7 @@ public class Game {
 	
 	void restartGame() {
 		this.players = new ArrayList<>();
-		
+		this.restart = new HashMap<>();
 		for (User user: this.users) {
 			Player player = new Player(user.getID());
 			this.players.add(player);
@@ -247,7 +249,7 @@ public class Game {
 	}
 
 
-  boolean getIsFinised() {
+  boolean getIsFinished() {
     return this.isFinished;
   }
 
@@ -259,7 +261,7 @@ public class Game {
   void sendToAllUsers(String message) {
     this.users.forEach(user -> {
       try {
-        user.getMySession().getBasicRemote().sendText(message);
+        user.getSession().getBasicRemote().sendText(message);
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -268,9 +270,18 @@ public class Game {
 
   void sendToUser(User user, String message) {
     try {
-      user.getMySession().getBasicRemote().sendText(message);
+      user.getSession().getBasicRemote().sendText(message);
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+  
+  void voteRestart(String UID, boolean res) {
+	  if(!restart.containsKey(UID)) {
+		  restart.put(UID, true);
+	  }
+	  if(restart.size() == players.size()) {
+		  restartGame();
+	  }
   }
 }
