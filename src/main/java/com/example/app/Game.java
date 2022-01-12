@@ -16,12 +16,13 @@ public class Game {
 	ArrayList<Player> players = new ArrayList<>();
 	ArrayList<User> users = new ArrayList<>();
 	ArrayList<Player> rank = new ArrayList<>();
+	HashMap<String, Boolean> restart;
 	Player winPlayer;
 	GameMap map;
 	int turn;
 	boolean effectDone;
 	int dice;
-  boolean isFinished = true;
+	boolean isFinished = false;
 	
 	public Game(String gID, ArrayList<User> userList){
 		this.gameID = gID;
@@ -35,7 +36,7 @@ public class Game {
 			Player player = new Player(user.getID());
 			this.players.add(player);
 		}
-		
+		restart = new HashMap<>();
 		//順番を決定
 		setOrder();
 
@@ -221,7 +222,7 @@ public class Game {
 	
 	void restartGame() {
 		this.players = new ArrayList<>();
-		
+		this.restart = new HashMap<>();
 		for (User user: this.users) {
 			Player player = new Player(user.getID());
 			this.players.add(player);
@@ -276,7 +277,7 @@ public class Game {
 	}
 
 
-  boolean getIsFinised() {
+  boolean getIsFinished() {
     return this.isFinished;
   }
 
@@ -301,5 +302,14 @@ public class Game {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+  
+  void voteRestart(String UID, boolean res) {
+	  if(!restart.containsKey(UID)) {
+		  restart.put(UID, true);
+	  }
+	  if(restart.size() == players.size()) {
+		  restartGame();
+	  }
   }
 }

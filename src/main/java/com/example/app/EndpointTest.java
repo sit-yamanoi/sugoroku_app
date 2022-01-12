@@ -80,7 +80,7 @@ public class EndpointTest {
 	        		User currectUser;
 	        		String username = receivedMessage.getData().getString("username");
 	        		if(NoConectedUsers.containsKey(username)) {
-	        			User currentUser = NoConectedUsers.get(username);
+	        			currentUser = NoConectedUsers.get(username);
 	        			currentUser.setSession(session);
 	        			UserList.put(session.getId(),currentUser);
 	        			NoConectedUsers.remove(username);
@@ -95,12 +95,12 @@ public class EndpointTest {
 	        		 */
 	        		currentUser = UserList.get(session.getId());
 	        		currentGame = GameList.get(currentUser.getGameID());
-	        		boolean res = ~~~; //Jsonから取得
+	        		boolean res = true; //Jsonから取得
 	        		if(res) {
-	        			currentGame.addRestart(currentUser, res);//全員が同意したかはGameクラスで判別
+	        			currentGame.voteRestart(currentUser.getID(), res);//全員が同意したかはGameクラスで判別
 	        		}else {
 	        			if(currentGame.getIsFinished()) {
-	        			currentGame.endGame();
+	        			currentGame.endMatch();
 	        			GameList.remove(currentUser.getGameID());
 	        			currentGame = null;
 	        			}
@@ -112,7 +112,7 @@ public class EndpointTest {
 	        		 */
 	        		currentUser = UserList.get(session.getId());
 	        		currentGame = GameList.get(currentUser.getGameID());
-	        		currentGame.endGame();//全員が同意したかはGameクラスで判別?
+	        		currentGame.endMatch();//全員が同意したかはGameクラスで判別
 	        		break;
 	        	case "USE_ITEM":
 	        		System.out.println("UI");
@@ -124,7 +124,7 @@ public class EndpointTest {
 	        		int position = receivedMessage.getData().getInt("Position");
 	        		int value = receivedMessage.getData().getInt("value");
 	        		
-	        		//Playerの取得法が不明
+	        		//TODO Playerの取得法が不明
 	        		currentGame.useItem(Player,position,value);
 	        		
 	        		break;
@@ -137,7 +137,7 @@ public class EndpointTest {
 	        		currentUser = UserList.get(session.getId());
 	        		currentGame = GameList.get(currentUser.getGameID());
 	        		
-	        		//User情報は渡さなくていいの?
+	        		//TODO User情報は渡さなくていいの?
 	        		//そのユーザの手番かどうかはAppServerクラスが判別?
 	        		currentGame.mainProcess();
 	        		break;
