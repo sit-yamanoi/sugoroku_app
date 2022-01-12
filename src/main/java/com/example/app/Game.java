@@ -42,7 +42,6 @@ public class Game {
 		for(Player p : players) {
 			p.setPos(map.start);
 		}
-		
 	}
 	
 	

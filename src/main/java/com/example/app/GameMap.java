@@ -8,7 +8,11 @@ public class GameMap {
 	int[] mapLen; //ルートの長さ [メインの長さ][分岐の長さ][分岐の長さ]の順
 	
 	GameMap(){
+<<<<<<< HEAD
 		mapStr = Arrays.copyOf(MapStr.map, 99);
+=======
+		mapStr = Arrays.copyOf(MapStr.str, 99);
+>>>>>>> branch 'testMap' of https://github.com/sit-yamanoi/sugoroku_app.git
 		mapLen = Arrays.copyOf(MapStr.len, 3);
 		genSquare();
 	}
@@ -38,7 +42,6 @@ public class GameMap {
 			m++;
 			fg = mapStr[m];
 			m++;
-			
 			
 			if(fs == 0) {
 				start = new Square(mapStr[m]);				
