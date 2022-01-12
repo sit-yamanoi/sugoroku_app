@@ -1,13 +1,17 @@
 package com.example.app;
 
+import javax.websocket.Session;
+
 public class User {
 	String userID = "";
+  Session mySession;
 	String webSocketID = "";
 	int status;
 	String gameID = "";
 	
-	User(String uID,String gID){
+	User(String uID,String gID, Session session){
 		userID = uID;
+    this.mySession = session;
 		status = 0;
 		gameID = gID;
 	}

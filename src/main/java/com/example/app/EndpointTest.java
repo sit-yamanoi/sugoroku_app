@@ -97,6 +97,14 @@ public class EndpointTest {
 	        		currentGame = GameList.get(currentUser.getGameID());
 	        		currentGame.restartGame();//全員が同意したかはGameクラスで判別?
 	        		break;
+	        	case "EXIT_GAME":
+	        		/*
+               * ゲーム終了
+	        		 */
+	        		currentUser = UserList.get(session.getId());
+	        		currentGame = GameList.get(currentUser.getGameID());
+	        		currentGame.endGame();//全員が同意したかはGameクラスで判別?
+	        		break;
 	        	case "USE_ITEM":
 	        		System.out.println("UI");
 	        		/*

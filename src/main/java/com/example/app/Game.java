@@ -8,6 +8,7 @@ import java.util.Random;
 
 import com.example.app.items.BaseItem;
 
+import org.json.JSONObject;
 
 public class Game {
 	String gameID = "";
@@ -19,6 +20,7 @@ public class Game {
 	int turn;
 	boolean effectDone;
 	int dice;
+  boolean isFinised = true;
 	
 	public Game(String gID, ArrayList<User> userList){
 		this.gameID = gID;
@@ -81,16 +83,18 @@ public class Game {
     	jsonMap.put("Roll", dice);
     	jsonMap.put("Effect", 0);
     	jsonMap.put("Value", 0);
-		//分岐入った場合分岐json送信
+      //ゴールした時の処理
     	if (targetPlayer.getGoalFlag()) {
     		this.winPlayer = targetPlayer;
-        	//TODO JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
-    		endMatch();
-    	}
-	    if (remainNum > 0) {
-			//json送信処理
-	    	jsonMap.put("NextDiceNum", remainNum);
-	    	//TODO JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+        this.isFinished = true;
+      }
+		//分岐入った場合分岐json送信
+    if (remainNum > 0) {
+    //json送信処理
+      jsonMap.put("NextDiceNum", remainNum);
+      // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+        String jsonStr = generateJSON(jsonMap);
+        sendToAllUsers(jsonStr)
 	    	return 1;
 	    } 
 	    
@@ -109,12 +113,17 @@ public class Game {
 	    	
 	    	if (targetPlayer.getGoalFlag()) {
 	    		this.winPlayer = targetPlayer;
-	        	//TODO JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
-	    		endMatch();
+          this.isFinished = true;
 	    	}
 	    }
     	//TODO JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+      String jsonStr = generateJSON(jsonMap);
+      sendToAllUsers(jsonStr);
 
+      //ゴールした場合
+      if (this.isFinished) {
+        endGame();
+      }
 		//次ターンにする
 	    takeNextTurn();
 
@@ -176,7 +185,8 @@ public class Game {
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("Request", "END_GAME");
 		jsonMap.put("Username", this.winPlayer.getUserID());
-    	//TODO JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+    sendToAllUsers(generateJSON(jsonMap));
 	}
 
 	
@@ -200,7 +210,8 @@ public class Game {
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("Result", "RESTART_GAME");
 		jsonMap.put("Status", true);
-    	//TODO JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+    sendToAllUsers(generateJSON(jsonMap));
 	}
 	
 	void takeNextTurn() {
@@ -212,7 +223,8 @@ public class Game {
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("Request", "NEXT_TURN");
 		jsonMap.put("Username", this.players.get(this.turn).getUserID());
-    	//TODO JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+    //TODO JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+    sendToAllUsers(generateJSON(jsonMap));
 	}
 	
 	boolean castChat(String str) {
@@ -233,4 +245,32 @@ public class Game {
 		}
 		return g;
 	}
+
+
+  boolean getIsFinised() {
+    return this.isFinished;
+  }
+
+  String generateJSON(Map<String, Object> jsonMap) {
+    JSONObject jo = new JSONObject(jsonMap);
+    return jo.toString();
+  }
+
+  void sendToAllUsers(String message) {
+    this.users.forEach(user -> {
+      try {
+        user.getMySession().getBasicRemote().sendText(message);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    });
+  }
+
+  void sendToUser(User user, String message) {
+    try {
+      user.getMySession().getBasicRemote().sendText(message);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 }
