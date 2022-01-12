@@ -121,9 +121,10 @@ public class AppServer implements Runnable{
 		        		currentGame = GameList.get(currentUser.getGameID());
 		        		boolean res; //Jsonから取得
 		        		if(res) {
-		        			currentGame.addRestart(currentUser, res);//全員が同意したかはGameクラスで判別
+		        			currentGame.voteRestart(currentUser, res);//全員が同意したかはGameクラスで判別
 		        		}else {
 		        			if(currentGame.getIsFinished()) {
+		        				//TODO endGameって何?
 		        			currentGame.endGame();
 		        			GameList.remove(currentUser.getGameID());
 		        			currentGame = null;
@@ -136,6 +137,7 @@ public class AppServer implements Runnable{
 		        		 */
 		        		currentUser = UserList.get(session.getId());
 		        		currentGame = GameList.get(currentUser.getGameID());
+		        		//TODO
 		        		currentGame.endGame();//全員が同意したかはGameクラスで判別?
 		        		break;
 		        	case "USE_ITEM":
@@ -148,7 +150,7 @@ public class AppServer implements Runnable{
 		        		int position = message.getData().getInt("Position");
 		        		int value = message.getData().getInt("value");
 		        		
-		        		//Playerの取得法が不明
+		        		//TODO Playerの取得法が不明
 		        		currentGame.useItem(Player,position,value);
 		        		
 		        		break;
