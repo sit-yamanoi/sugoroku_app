@@ -1,26 +1,28 @@
 package com.example.app;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import com.example.app.items.BaseItem;
-
 import org.json.JSONObject;
+
+import com.example.app.items.BaseItem;
 
 public class Game {
 	String gameID = "";
 	ArrayList<Player> players = new ArrayList<>();
 	ArrayList<User> users = new ArrayList<>();
 	ArrayList<Player> rank = new ArrayList<>();
+	HashMap<String, Boolean> restart;
 	Player winPlayer;
 	GameMap map;
 	int turn;
 	boolean effectDone;
 	int dice;
-  boolean isFinised = true;
+	boolean isFinished = false;
 	
 	public Game(String gID, ArrayList<User> userList){
 		this.gameID = gID;
@@ -34,7 +36,7 @@ public class Game {
 			Player player = new Player(user.getID());
 			this.players.add(player);
 		}
-		
+		restart = new HashMap<>();
 		//順番を決定
 		setOrder();
 
@@ -77,24 +79,24 @@ public class Game {
 		//駒移動
 	    int remainNum = targetPlayer.move(dice);
 	    
-	    //JSON用 Map 初期化
-    	Map<String, Object> jsonMap = new HashMap<String, Object>();
-    	jsonMap.put("Result", "ROLL_DICE");
-    	jsonMap.put("Roll", dice);
-    	jsonMap.put("Effect", 0);
-    	jsonMap.put("Value", 0);
-      //ゴールした時の処理
-    	if (targetPlayer.getGoalFlag()) {
-    		this.winPlayer = targetPlayer;
-        this.isFinished = true;
-      }
+    //JSON用 Map 初期化
+    Map<String, Object> jsonMap = new HashMap<String, Object>();
+    jsonMap.put("Result", "ROLL_DICE");
+    jsonMap.put("Roll", dice);
+    jsonMap.put("Effect", 0);
+    jsonMap.put("Value", 0);
+    //ゴールした時の処理
+    if (targetPlayer.getGoalFlag()) {
+      this.winPlayer = targetPlayer;
+      this.isFinished = true;
+    }
 		//分岐入った場合分岐json送信
     if (remainNum > 0) {
     //json送信処理
       jsonMap.put("NextDiceNum", remainNum);
       // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
         String jsonStr = generateJSON(jsonMap);
-        sendToAllUsers(jsonStr)
+        sendToAllUsers(jsonStr);
 	    	return 1;
 	    } 
 	    
@@ -116,13 +118,12 @@ public class Game {
           this.isFinished = true;
 	    	}
 	    }
-    	//TODO JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
-      String jsonStr = generateJSON(jsonMap);
-      sendToAllUsers(jsonStr);
+    	// JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+      sendToAllUsers(generateJSON(jsonMap));
 
       //ゴールした場合
       if (this.isFinished) {
-        endGame();
+        endMatch();
       }
 		//次ターンにする
 	    takeNextTurn();
@@ -138,16 +139,45 @@ public class Game {
 			p.setPos(pos.next0);
 		}
 		int remainNum = p.getMoveRemainNum();
-		//駒移動
-		p.move(remainNum);
+
+	    //JSON用 Map 初期化
+	    Map<String, Object> jsonMap = new HashMap<String, Object>();
+	    jsonMap.put("Result", "SELECT_ROUTE");
+	    jsonMap.put("Roll", remainNum);
+	    jsonMap.put("NextDiceNum", 0);
+	    jsonMap.put("Effect", 0);
+	    jsonMap.put("Value", 0);
+	
+			//駒移動
+			p.move(remainNum);
 	    if (!this.effectDone) {
-			//マスの効果発動
-	    	squareEffect(p);
+				//マスの効果発動
+		    	Map<String, Integer> effectResult = squareEffect(p);
+		    	int effect = effectResult.get("Effect");
+		    	int value = effectResult.get("Value");
+				//進むor戻る効果だった場合コマ移動
+			    if (effect == 2 || effect == 3) {
+				    remainNum = p.move(value);
+			    }
+		    	jsonMap.put("Effect", effect);
+		    	jsonMap.put("Value", value);
+		    	
+		    	if (p.getGoalFlag()) {
+		    		this.winPlayer = p;
+	          this.isFinished = true;
+		    	}
+	    }
+	    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+	    sendToAllUsers(generateJSON(jsonMap));
+	
+	    //ゴールした場合
+	    if (this.isFinished) {
+	      endMatch();
 	    }
 	    
 	    if (this.turn == this.players.indexOf(p)) {
-			//次ターンにする
-		    takeNextTurn();
+	    //次ターンにする
+	      takeNextTurn();
 	    }
 	}
 	
@@ -192,7 +222,7 @@ public class Game {
 	
 	void restartGame() {
 		this.players = new ArrayList<>();
-		
+		this.restart = new HashMap<>();
 		for (User user: this.users) {
 			Player player = new Player(user.getID());
 			this.players.add(player);
@@ -223,7 +253,7 @@ public class Game {
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("Request", "NEXT_TURN");
 		jsonMap.put("Username", this.players.get(this.turn).getUserID());
-    //TODO JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
     sendToAllUsers(generateJSON(jsonMap));
 	}
 	
@@ -247,7 +277,7 @@ public class Game {
 	}
 
 
-  boolean getIsFinised() {
+  boolean getIsFinished() {
     return this.isFinished;
   }
 
@@ -259,7 +289,7 @@ public class Game {
   void sendToAllUsers(String message) {
     this.users.forEach(user -> {
       try {
-        user.getMySession().getBasicRemote().sendText(message);
+        user.getSession().getBasicRemote().sendText(message);
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -268,9 +298,18 @@ public class Game {
 
   void sendToUser(User user, String message) {
     try {
-      user.getMySession().getBasicRemote().sendText(message);
+      user.getSession().getBasicRemote().sendText(message);
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+  
+  void voteRestart(String UID, boolean res) {
+	  if(!restart.containsKey(UID)) {
+		  restart.put(UID, true);
+	  }
+	  if(restart.size() == players.size()) {
+		  restartGame();
+	  }
   }
 }
