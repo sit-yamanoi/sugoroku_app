@@ -81,7 +81,7 @@ public class EndpointTest {
 	        		String username = receivedMessage.getData().getString("username");
 	        		if(NoConectedUsers.containsKey(username)) {
 	        			User currentUser = NoConectedUsers.get(username);
-	        			currentUser.setWebSocketID(session);
+	        			currentUser.setSession(session);
 	        			UserList.put(session.getId(),currentUser);
 	        			NoConectedUsers.remove(username);
 	        			//ゲーム情報送信
@@ -95,7 +95,16 @@ public class EndpointTest {
 	        		 */
 	        		currentUser = UserList.get(session.getId());
 	        		currentGame = GameList.get(currentUser.getGameID());
-	        		currentGame.restartGame();//全員が同意したかはGameクラスで判別?
+	        		boolean res = ~~~; //Jsonから取得
+	        		if(res) {
+	        			currentGame.addRestart(currentUser, res);//全員が同意したかはGameクラスで判別
+	        		}else {
+	        			if(currentGame.getIsFinished()) {
+	        			currentGame.endGame();
+	        			GameList.remove(currentUser.getGameID());
+	        			currentGame = null;
+	        			}
+	        		}
 	        		break;
 	        	case "EXIT_GAME":
 	        		/*
@@ -153,6 +162,18 @@ public class EndpointTest {
 	        		 */
 	        		System.out.println("SC");
 	        		break;
+	        	/*	
+	        	case "END_GAME":
+	        		System.out.println("EG");
+	        		 //ゲーム終了の処理
+	        		currentUser = UserList.get(session.getId());
+	        		currentGame = GameList.get(currentUser.getGameID());
+	        		
+	        		if(currentGame.getIsFinished()) {
+	        			
+	        		}
+	        		break;
+	        	*/
 	        	default:
 	        		System.out.println("don't defined request : " + request);
 	        }
