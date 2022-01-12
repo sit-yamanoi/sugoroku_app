@@ -29,8 +29,9 @@ public class Square {
 			return 0;
 			
 		case 1: //getItem
-			p.addItem(BaseItem.generateItem());
-			return 0;
+			BaseItem item = BaseItem.generateItem();
+			p.addItem(item);
+			return item.getItemID();
 			
 		case 2: //goFoward
 			r = random.nextInt(3);
