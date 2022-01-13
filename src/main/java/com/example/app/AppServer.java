@@ -131,6 +131,7 @@ public class AppServer implements Runnable{
 		        		JSONArray jarUserID = jMessage.getJSONArray("UserList");
 		        		ArrayList<User> users = new ArrayList<>();
 		        		
+		        		//gameIDの重複チェック
 		        		if(gameList.containsKey(gameID)) {
 		        			//TODO エラーメッセージをクライアント管理サーバーに送信
 		        			System.out.println("GameIDが重複");
@@ -162,7 +163,7 @@ public class AppServer implements Runnable{
 		        			currentUser.setSession(currentSession);
 		        			userList.put(currentSession.getId(),currentUser);
 		        			noConectedUsers.remove(username);
-		        			//ゲーム情報送信
+		        			//TODO ゲーム情報送信
 		        		}else {
 		        			//登録済みではないことを通信
 		        		}
