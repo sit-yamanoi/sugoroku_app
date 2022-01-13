@@ -60,7 +60,7 @@ public class ComManeger {
         System.out.println("[WebSocketServerSample] onError:" + session.getId());
     }
 
-	public void sendMessage(Session session, String message) {
+	public static void sendMessage(Session session, String message) {
 		System.out.println("[WebSocketServerSample] sendMessage(): " + message);
 		try {
 			// 同期送信（sync）
