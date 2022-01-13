@@ -186,7 +186,7 @@ public class AppServer implements Runnable{
 		        		userList.put(currentSession.getId(),currentUser);
 		        		noConectedUsers.remove(username);
 		        		
-		        		//TODO ゲーム情報送信
+		        		//ゲーム情報送信
 		        		sendJobj = new JSONObject();
 		        		sendJobj.put("Result", "JOIN_GAME");
 		        		sendJobj.put("Status", true);
@@ -204,7 +204,7 @@ public class AppServer implements Runnable{
 		        		break;
 		        	case "RESTART_GAME":
 		        		/*
-		        		 * 再戦処理
+		        		 * 再戦処理(実装しない)
 		        		 */
 		        		/*currentUser = userList..get(currentSession.getId());
 		        		currentGame = gameList.get(currentUser.getGameID());
@@ -213,7 +213,7 @@ public class AppServer implements Runnable{
 		        			currentGame.voteRestart(currentUser, res);//全員が同意したかはGameクラスで判別
 		        		}else {
 		        			if(currentGame.getIsFinished()) {
-		        				//TODO endGameって何?
+		        				//endGameって何?
 		        			currentGame.endGame();
 		        			gameList.remove(currentUser.getGameID());
 		        			currentGame = null;
@@ -222,17 +222,16 @@ public class AppServer implements Runnable{
 		        		break;
 		        	case "EXIT_GAME":
 		        		/*
-		        		 * ゲーム終了
+		        		 * ゲーム終了(実装しない。ゲームを終了する処理は、誰かがゴールに到着した時点で行う)
 		        		 */
 		        		/*currentUser = userList.get(currentSession.getId());
 		        		currentGame = gameList.get(currentUser.getGameID());
-		        		//TODO
 		        		currentGame.endGame();//全員が同意したかはGameクラスで判別?*/
 		        		break;
 		        	case "USE_ITEM":
 		        		System.out.println("UI");
 		        		/*
-		        		 * アイテム使用処理
+		        		 * アイテム使用処理(実装しない)
 		        		 */
 		        		/*currentUser = userList.get(currentSession.getId());
 		        		currentGame = gameList.get(currentUser.getGameID());
@@ -246,15 +245,15 @@ public class AppServer implements Runnable{
 		        	case "ROLL_DICE":
 		        		System.out.println("RD");
 		        		/*
-		        		 * サイコロを降る処理
+		        		 * サイコロをふる処理
 		        		 * mainProcessを呼び出す
 		        		 */
-		        		/*currentUser = userList.get(currentSession.getId());
+		        		currentUser = userList.get(currentSession.getId());
 		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
 		        		//User情報は渡さなくていいの?
 		        		//そのユーザの手番かどうかはAppServerクラスが判別?
-		        		currentGame.mainProcess();*/
+		        		currentGame.mainProcess();
 		        		break;
 		        	case "SELECT_ROUTE":
 		        		System.out.println("SR");
@@ -272,12 +271,12 @@ public class AppServer implements Runnable{
 		        		break;
 		        	case "SEND_CHAT":
 		        		/*
-		        		 * チャットを送信
+		        		 * チャットを送信(実装しない)
 		        		 * 未設定
 		        		 */
-		        		currentUser = userList.get(currentSession.getId());
+		        		/*currentUser = userList.get(currentSession.getId());
 		        		currentGame = gameList.get(currentUser.getGameID());
-		        		System.out.println("SC");
+		        		System.out.println("SC");*/
 		        		break;
 		        	/*	
 		        	case "END_GAME":
@@ -310,4 +309,6 @@ public class AppServer implements Runnable{
     	System.out.println("SendMessage");
     	ComManeger.sendMessage(session, jobj.toString());
     }
+    
+    
 }
