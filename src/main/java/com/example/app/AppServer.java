@@ -85,14 +85,16 @@ public class AppServer implements Runnable{
     
     
     synchronized public void hundleMessage() {
-		User currentUser;
-		Game currentGame;
-		Message message;
-		Session currentSession;
-		JSONObject jMessage;
-		String request;
-		
     	while(true) {
+    		User currentUser;
+    		Game currentGame;
+    		Message message;
+    		String request;
+    		Session currentSession;
+    		JSONObject receiveJobj,sendJobj;
+    		ArrayList<User> users;
+    		ArrayList<Player> players;
+    		
     		//キューからメッセージを取得
 	    	message = ComManeger.deq();
 	    	//キューになにもないときはつレッドを停止する
@@ -107,11 +109,11 @@ public class AppServer implements Runnable{
 				continue;
 	    	}
 	    	
-	    	jMessage = message.getData();
+	    	receiveJobj = message.getData();
 	    	currentSession = message.getSession();
 	    	
 	        try {
-	        	request = jMessage.getString("Request");
+	        	request = receiveJobj.getString("Request");
 	        }catch(org.json.JSONException e) {
 				System.out.println("not reqest");
 				return;
@@ -127,9 +129,9 @@ public class AppServer implements Runnable{
 		        		 * NoConectedUsersに追加
 		        		 * ゲームのインスタンスを作成
 		        		 */
-		        		String gameID = jMessage.getString("LobyID");	        				
-		        		JSONArray jarUserID = jMessage.getJSONArray("UserList");
-		        		ArrayList<User> users = new ArrayList<>();
+		        		String gameID = receiveJobj.getString("LobyID");	        				
+		        		JSONArray jarUserID = receiveJobj.getJSONArray("UserList");
+		        		users = new ArrayList<>();
 		        		
 		        		//gameIDの重複チェック
 		        		if(gameList.containsKey(gameID)) {
@@ -150,6 +152,14 @@ public class AppServer implements Runnable{
 		        		gameList.put(gameID, new Game(gameID,users));
 		        		System.out.println("game Maked");
 		        		System.out.println(gameList.get(gameID));
+		        		
+		        		//クライアント管理サーバーに完了を通知
+		        		sendJobj = new JSONObject();
+		        		sendJobj.put("request", "MAKE_GAME");
+		        		sendJobj.put("LobyID",gameID);//TODO booleanのほうが良くね?
+		        		
+		        		sendMessage(currentSession,sendJobj);
+		        		
 		        		break;
 		        	case "JOIN_GAME":
 		        		System.out.println("JG");
@@ -157,16 +167,40 @@ public class AppServer implements Runnable{
 		        		 * ユーザのSessionを設定しUserListに追加
 		        		 * ゲームの情報を送信
 		        		 */
-		        		String username = jMessage.getString("username");
-		        		if(noConectedUsers.containsKey(username)) {
-		        			currentUser = noConectedUsers.get(username);
-		        			currentUser.setSession(currentSession);
-		        			userList.put(currentSession.getId(),currentUser);
-		        			noConectedUsers.remove(username);
-		        			//TODO ゲーム情報送信
-		        		}else {
+		        		String username = receiveJobj.getString("Username");
+		        		//接続待ちリストに入っているユーザーか判定
+		        		if(!noConectedUsers.containsKey(username)) {
 		        			//登録済みではないことを通信
+		        			sendJobj = new JSONObject();
+			        		sendJobj.put("Result", "kyokanashi");
+			        		sendJobj.put("UID", username);
+		        			sendMessage(currentSession,sendJobj);
+		        			break;
 		        		}
+		        		
+		        		currentUser = noConectedUsers.get(username);
+		        		currentGame = gameList.get(currentUser.getGameID());
+		        		
+		        		//ユーザのセッションを設定し、UserListに追加
+		        		currentUser.setSession(currentSession);
+		        		userList.put(currentSession.getId(),currentUser);
+		        		noConectedUsers.remove(username);
+		        		
+		        		//TODO ゲーム情報送信
+		        		sendJobj = new JSONObject();
+		        		sendJobj.put("Result", "JOIN_GAME");
+		        		sendJobj.put("Status", true);
+		        		
+		        		//usernameのリスト作成
+		        		players = currentGame.getPlayerList();
+		        		JSONArray userNames = new JSONArray();
+		        		for(int i=0;i<players.size();i++) {
+		        			userNames.put(players.get(i).getUserID());
+		        		}
+		        		
+		        		sendJobj.put("UserList",userNames);
+		        		sendMessage(currentSession,sendJobj);
+		        		
 		        		break;
 		        	case "RESTART_GAME":
 		        		/*
@@ -202,8 +236,8 @@ public class AppServer implements Runnable{
 		        		 */
 		        		/*currentUser = userList.get(currentSession.getId());
 		        		currentGame = gameList.get(currentUser.getGameID());
-		        		int position = jMessage.getInt("Position");
-		        		int value = jMessage.getInt("value");
+		        		int position = receiveJobj.getInt("Position");
+		        		int value = receiveJobj.getInt("value");
 		        		
 		        		//TODO Playerの取得法が不明
 		        		currentGame.useItem(Player,position,value);*/
@@ -231,7 +265,7 @@ public class AppServer implements Runnable{
 		        		currentUser = userList.get(currentSession.getId());
 		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
-		        		int route = jMessage.getInt("Route");
+		        		int route = receiveJobj.getInt("Route");
 		        		//TODO Playerの取得方法が不明
 		        		currentGame.selectRoute(null,route );
 		        		
@@ -272,7 +306,8 @@ public class AppServer implements Runnable{
     	this.notify();
     }
     
-    public void sendMessage(Session session,JSONObject jMessage) {
-    	ComManeger.sendMessage(session, jMessage.toString());
+    public void sendMessage(Session session,JSONObject jobj) {
+    	System.out.println("SendMessage");
+    	ComManeger.sendMessage(session, jobj.toString());
     }
 }
