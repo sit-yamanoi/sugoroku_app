@@ -271,4 +271,8 @@ public class AppServer implements Runnable{
     synchronized public void nft() {
     	this.notify();
     }
+    
+    public void sendMessage(Session session,JSONObject jMessage) {
+    	ComManeger.sendMessage(session, jMessage.toString());
+    }
 }
