@@ -1,5 +1,6 @@
 package com.example.app;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.websocket.Session;
@@ -27,6 +28,35 @@ public class AppServer implements Runnable{
 		AppServer appServer = new AppServer();
 		ComManeger.setServer(appServer);
 		Thread trd = new Thread(appServer);
+		/*
+		 * テスト用の、ゲーム、ユーザを作成
+		 */
+		//ID設定
+		String testGameID = "test";
+		String testUserID[] = {"user0","user1","user2","user3"};
+		
+		//NoConnectedUsersに追加
+		for(int i=0;i<4;i++) {
+			appServer.NoConectedUsers.put(testUserID[i],new User(testUserID[i],testGameID));
+		}
+		
+		ArrayList<User> users = new ArrayList<>();
+		
+		for(int i=0;i<4;i++) {
+			users.add(appServer.NoConectedUsers.get(testUserID[i]));
+		}
+		Game testGame = new Game(testGameID,users);
+		appServer.GameList.put(testGameID, testGame);
+		
+		//テスト出力
+		System.out.println("test print");
+		Game currentGame = appServer.GameList.get(testGameID);
+		System.out.println("gameID = " + currentGame.getGameID());
+		users = currentGame.getUserList();
+		for(int i=0;i<4;i++) {
+			System.out.println(users.get(i));
+		}
+		
 		try {
 			System.out.println("---Server Start---");
 			server.start();
