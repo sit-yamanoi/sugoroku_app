@@ -312,4 +312,13 @@ public class Game {
 		  restartGame();
 	  }
   }
+  public String toString() {
+	  String res;
+	  res = gameID;
+	  for(int i=0;i<users.size();i++) {
+		  res += "\n" + users.get(i).toString();
+	  }
+	  return res;
+	  
+  }
 }
