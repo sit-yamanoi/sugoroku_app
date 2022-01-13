@@ -6,6 +6,8 @@ import java.util.HashMap;
 import javax.websocket.Session;
 
 import org.glassfish.tyrus.server.Server;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 public class AppServer implements Runnable{
@@ -17,9 +19,9 @@ public class AppServer implements Runnable{
 	static String contextRoot = "/app";
 	static String protocol = "ws";
 	static int port = 8080;
-	HashMap<String,User> UserList = new HashMap<>();
-	HashMap<String,User> NoConectedUsers = new HashMap<>();
-	HashMap<String,Game> GameList = new HashMap<>();
+	HashMap<String,User> userList = new HashMap<>();
+	HashMap<String,User> noConectedUsers = new HashMap<>();
+	HashMap<String,Game> gameList = new HashMap<>();
 
 
     public static void main(String[] args) throws Exception {
@@ -35,22 +37,23 @@ public class AppServer implements Runnable{
 		String testGameID = "test";
 		String testUserID[] = {"user0","user1","user2","user3"};
 		
-		//NoConnectedUsersに追加
-		for(int i=0;i<4;i++) {
-			appServer.NoConectedUsers.put(testUserID[i],new User(testUserID[i],testGameID));
-		}
-		
 		ArrayList<User> users = new ArrayList<>();
 		
 		for(int i=0;i<4;i++) {
-			users.add(appServer.NoConectedUsers.get(testUserID[i]));
+			users.add(new User(testUserID[i],testGameID));
 		}
+		
+		//NoConnectedUsersに追加
+		for(int i=0;i<4;i++) {
+			appServer.noConectedUsers.put(testUserID[i],users.get(i));
+		}
+		
 		Game testGame = new Game(testGameID,users);
-		appServer.GameList.put(testGameID, testGame);
+		appServer.gameList.put(testGameID, testGame);
 		
 		//テスト出力
 		System.out.println("test print");
-		Game currentGame = appServer.GameList.get(testGameID);
+		Game currentGame = appServer.gameList.get(testGameID);
 		System.out.println("gameID = " + currentGame.getGameID());
 		users = currentGame.getUserList();
 		for(int i=0;i<4;i++) {
@@ -82,12 +85,18 @@ public class AppServer implements Runnable{
     
     
     synchronized public void hundleMessage() {
+		User currentUser;
+		Game currentGame;
+		Message message;
+		Session currentSession;
+		JSONObject jMessage;
+		String request;
+		
     	while(true) {
     		//キューからメッセージを取得
-	    	Message message = ComManeger.deq();
+	    	message = ComManeger.deq();
 	    	//キューになにもないときはつレッドを停止する
-	    	if(message == null)
-			{
+	    	if(message == null){
 				System.out.println("wait");
 				try {
 				    wait();
@@ -96,48 +105,63 @@ public class AppServer implements Runnable{
 				}
 				System.out.println("notify");
 				continue;
-			}
+	    	}
 	    	
-	        String request = null;//初期化
+	    	jMessage = message.getData();
+	    	currentSession = message.getSession();
+	    	
 	        try {
-	        	request = message.getData().getString("Request");
+	        	request = jMessage.getString("Request");
 	        }catch(org.json.JSONException e) {
 				System.out.println("not reqest");
 				return;
 			}
 	        
-			User currentUser;
-			Game currentGame;
-			Session session = message.getSession();
 	        try {
 	        	switch(request){
 		        	case "MAKE_GAME":
 		        		System.out.println("MG");
 		        		/*
+		        		 * ゲームIDの重複チェック
+		        		 * ユーザのインスタンス群を作成
+		        		 * NoConectedUsersに追加
 		        		 * ゲームのインスタンスを作成
-		        		 * ユーザをそこに登録
 		        		 */
-		        		String LobyID = message.getData().getString("LobyID");
-		        		/*
-		        		 * 配列のやり方がわからないので未完成
-		        		 * 送られてきたユーザのインスタンスを作成し、userID,status,gameIDを設定
-		        		 * それらを、使って、Gameクラスのインスタンスを作成
-		        		 * 作成できたら、クライアント管理サーバにメッセージを送信
-		        		 */
+		        		String gameID = jMessage.getString("LobyID");	        				
+		        		JSONArray jarUserID = jMessage.getJSONArray("UserList");
+		        		ArrayList<User> users = new ArrayList<>();
+		        		
+		        		if(gameList.containsKey(gameID)) {
+		        			//TODO エラーメッセージをクライアント管理サーバーに送信
+		        			System.out.println("GameIDが重複");
 		        			break;
+		        		}
+		        		
+		        		//Userのインスタンス群を作成
+		        		for(int i=0;i<jarUserID.length();i++) {
+		        			users.add(new User(jarUserID.getString(i),gameID));
+		        		}
+		        		//NoConectedUsersに追加
+		        		for(int i=0;i<jarUserID.length();i++) {
+							noConectedUsers.put(jarUserID.getString(i),users.get(i));
+						}
+		        		
+		        		gameList.put(gameID, new Game(gameID,users));
+		        		System.out.println("game Maked");
+		        		System.out.println(gameList.get(gameID));
+		        		break;
 		        	case "JOIN_GAME":
 		        		System.out.println("JG");
 		        		/*
 		        		 * ユーザのSessionを設定しUserListに追加
 		        		 * ゲームの情報を送信
 		        		 */
-		        		User currectUser;
-		        		String username = message.getData().getString("username");
-		        		if(NoConectedUsers.containsKey(username)) {
-		        			currentUser = NoConectedUsers.get(username);
-		        			currentUser.setSession(session);
-		        			UserList.put(session.getId(),currentUser);
-		        			NoConectedUsers.remove(username);
+		        		String username = jMessage.getString("username");
+		        		if(noConectedUsers.containsKey(username)) {
+		        			currentUser = noConectedUsers.get(username);
+		        			currentUser.setSession(currentSession);
+		        			userList.put(currentSession.getId(),currentUser);
+		        			noConectedUsers.remove(username);
 		        			//ゲーム情報送信
 		        		}else {
 		        			//登録済みではないことを通信
@@ -147,8 +171,8 @@ public class AppServer implements Runnable{
 		        		/*
 		        		 * 再戦処理
 		        		 */
-		        		currentUser = UserList.get(session.getId());
-		        		currentGame = GameList.get(currentUser.getGameID());
+		        		/*currentUser = userList..get(currentSession.getId());
+		        		currentGame = gameList.get(currentUser.getGameID());
 		        		boolean res; //Jsonから取得
 		        		if(res) {
 		        			currentGame.voteRestart(currentUser, res);//全員が同意したかはGameクラスで判別
@@ -156,32 +180,32 @@ public class AppServer implements Runnable{
 		        			if(currentGame.getIsFinished()) {
 		        				//TODO endGameって何?
 		        			currentGame.endGame();
-		        			GameList.remove(currentUser.getGameID());
+		        			gameList.remove(currentUser.getGameID());
 		        			currentGame = null;
 		        			}
-		        		}
+		        		}*/
 		        		break;
 		        	case "EXIT_GAME":
 		        		/*
-	               * ゲーム終了
+		        		 * ゲーム終了
 		        		 */
-		        		currentUser = UserList.get(session.getId());
-		        		currentGame = GameList.get(currentUser.getGameID());
+		        		/*currentUser = userList.get(currentSession.getId());
+		        		currentGame = gameList.get(currentUser.getGameID());
 		        		//TODO
-		        		currentGame.endGame();//全員が同意したかはGameクラスで判別?
+		        		currentGame.endGame();//全員が同意したかはGameクラスで判別?*/
 		        		break;
 		        	case "USE_ITEM":
 		        		System.out.println("UI");
 		        		/*
 		        		 * アイテム使用処理
 		        		 */
-		        		currentUser = UserList.get(session.getId());
-		        		currentGame = GameList.get(currentUser.getGameID());
-		        		int position = message.getData().getInt("Position");
-		        		int value = message.getData().getInt("value");
+		        		/*currentUser = userList.get(currentSession.getId());
+		        		currentGame = gameList.get(currentUser.getGameID());
+		        		int position = jMessage.getInt("Position");
+		        		int value = jMessage.getInt("value");
 		        		
 		        		//TODO Playerの取得法が不明
-		        		currentGame.useItem(Player,position,value);
+		        		currentGame.useItem(Player,position,value);*/
 		        		
 		        		break;
 		        	case "ROLL_DICE":
@@ -190,12 +214,12 @@ public class AppServer implements Runnable{
 		        		 * サイコロを降る処理
 		        		 * mainProcessを呼び出す
 		        		 */
-		        		currentUser = UserList.get(session.getId());
-		        		currentGame = GameList.get(currentUser.getGameID());
+		        		/*currentUser = userList.get(currentSession.getId());
+		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
 		        		//User情報は渡さなくていいの?
 		        		//そのユーザの手番かどうかはAppServerクラスが判別?
-		        		currentGame.mainProcess();
+		        		currentGame.mainProcess();*/
 		        		break;
 		        	case "SELECT_ROUTE":
 		        		System.out.println("SR");
@@ -203,11 +227,11 @@ public class AppServer implements Runnable{
 		        		 * 分岐点選択を行う
 		        		 */
 		        		
-		        		currentUser = UserList.get(session.getId());
-		        		currentGame = GameList.get(currentUser.getGameID());
+		        		currentUser = userList.get(currentSession.getId());
+		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
-		        		int route = message.getData().getInt("Route");
-		        		//Playerの取得方法が不明
+		        		int route = jMessage.getInt("Route");
+		        		//TODO Playerの取得方法が不明
 		        		currentGame.selectRoute(null,route );
 		        		
 		        		break;
@@ -216,14 +240,16 @@ public class AppServer implements Runnable{
 		        		 * チャットを送信
 		        		 * 未設定
 		        		 */
+		        		currentUser = userList.get(currentSession.getId());
+		        		currentGame = gameList.get(currentUser.getGameID());
 		        		System.out.println("SC");
 		        		break;
 		        	/*	
 		        	case "END_GAME":
 		        		System.out.println("EG");
 		        		 //ゲーム終了の処理
-		        		currentUser = UserList.get(session.getId());
-		        		currentGame = GameList.get(currentUser.getGameID());
+		        		currentUser = userList.get(session.getId());
+		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
 		        		if(currentGame.getIsFinished()) {
 		        			
