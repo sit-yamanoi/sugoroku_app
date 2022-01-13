@@ -7,9 +7,8 @@ public class User {
 	int status;
 	String gameID = "";
 	
-	User(String uID,String gID, Session session){
+	User(String uID,String gID){
 		userID = uID;
-    this.mySession = session;
 		status = 0;
 		gameID = gID;
 	}
