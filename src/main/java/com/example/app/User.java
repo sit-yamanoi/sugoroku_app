@@ -3,7 +3,7 @@ import javax.websocket.Session;
 
 public class User {
 	String userID = "";
-	Session mySession;
+	Session mySession = null;
 	int status;
 	String gameID = "";
 	
@@ -41,6 +41,9 @@ public class User {
 		return status;
 	}
 	public String toString() {
+		if(mySession == null) {
+			return "userID : "+userID+"\nwebSocketID : null \nstatus : "+status+"\ngameID : "+gameID;
+		}
 		return "userID : "+userID+"\nwebSocketID : "+ mySession.getId() +"\nstatus : "+status+"\ngameID : "+gameID;
 	}
 }
