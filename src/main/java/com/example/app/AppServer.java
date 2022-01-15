@@ -18,7 +18,7 @@ public class AppServer implements Runnable{
 
 	static String contextRoot = "/app";
 	static String protocol = "ws";
-	static int port = 8080;
+	static int port = 8081;
 	HashMap<String,User> userList = new HashMap<>();
 	HashMap<String,User> noConectedUsers = new HashMap<>();
 	HashMap<String,Game> gameList = new HashMap<>();
