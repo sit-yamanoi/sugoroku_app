@@ -129,7 +129,7 @@ public class AppServer implements Runnable{
 		        		 * NoConectedUsersに追加
 		        		 * ゲームのインスタンスを作成
 		        		 */
-		        		String gameID = receiveJobj.getString("LobyID");	        				
+		        		String gameID = receiveJobj.getString("LobbyID");	        				
 		        		JSONArray jarUserID = receiveJobj.getJSONArray("UserList");
 		        		users = new ArrayList<>();
 		        		
