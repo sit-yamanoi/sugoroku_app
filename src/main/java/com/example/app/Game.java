@@ -13,7 +13,7 @@ import com.example.app.items.BaseItem;
 public class Game {
 	String gameID = "";
 	ArrayList<Player> players = new ArrayList<>();
-  HashMap<String, Player> playersMap;
+	HashMap<String, Player> playersMap;
 	ArrayList<User> users = new ArrayList<>();
 	ArrayList<Player> rank = new ArrayList<>();
 	HashMap<String, Boolean> restart;
@@ -133,14 +133,15 @@ public class Game {
 	    return 0;
 	}
 	
-	void selectRoute(Player p, int way) {
-		Square pos = p.getPos();
+	void selectRoute(int way) {
+		Player targetPlayer = this.players.get(this.turn);
+		Square pos = targetPlayer.getPos();
 		if(way == 1) {
-			p.setPos(pos.next1);
+			targetPlayer.setPos(pos.next1);
 		}else {
-			p.setPos(pos.next0);
+			targetPlayer.setPos(pos.next0);
 		}
-		int remainNum = p.getMoveRemainNum();
+		int remainNum = targetPlayer.getMoveRemainNum();
 
 	    //JSON用 Map 初期化
 	    Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -151,21 +152,21 @@ public class Game {
 	    jsonMap.put("Value", 0);
 	
 			//駒移動
-			p.move(remainNum);
+			targetPlayer.move(remainNum);
 	    if (!this.effectDone) {
 				//マスの効果発動
-		    	Map<String, Integer> effectResult = squareEffect(p);
+		    	Map<String, Integer> effectResult = squareEffect(targetPlayer);
 		    	int effect = effectResult.get("Effect");
 		    	int value = effectResult.get("Value");
 				//進むor戻る効果だった場合コマ移動
 			    if (effect == 2 || effect == 3) {
-				    remainNum = p.move(value);
+				    remainNum = targetPlayer.move(value);
 			    }
 		    	jsonMap.put("Effect", effect);
 		    	jsonMap.put("Value", value);
 		    	
-		    	if (p.getGoalFlag()) {
-		    		this.winPlayer = p;
+		    	if (targetPlayer.getGoalFlag()) {
+		    		this.winPlayer = targetPlayer;
 	          this.isFinished = true;
 		    	}
 	    }
@@ -177,7 +178,7 @@ public class Game {
 	      endMatch();
 	    }
 	    
-	    if (this.turn == this.players.indexOf(p)) {
+	    if (this.turn == this.players.indexOf(targetPlayer)) {
 	    //次ターンにする
 	      takeNextTurn();
 	    }
@@ -215,7 +216,7 @@ public class Game {
 	void endMatch() {
 		//json送信処理
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		jsonMap.put("Request", "END_GAME");
+		jsonMap.put("Result", "END_GAME");
 		jsonMap.put("Username", this.winPlayer.getUserID());
     // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
     sendToAllUsers(generateJSON(jsonMap));
@@ -255,9 +256,13 @@ public class Game {
 			this.turn++;
 		}
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		jsonMap.put("Request", "NEXT_TURN");
+		jsonMap.put("Result", "NEXT_TURN");
 		jsonMap.put("Username", this.players.get(this.turn).getUserID());
     // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+		try {
+			Thread.sleep(2000);
+		}catch (InterruptedException e) {		        				
+		}
     sendToAllUsers(generateJSON(jsonMap));
 	}
 	

@@ -198,8 +198,31 @@ public class AppServer implements Runnable{
 		        			userNames.put(players.get(i).getUserID());
 		        		}
 		        		
-		        		sendJobj.put("UserList",userNames);
+		        		sendJobj.put("PlayerList",userNames);
 		        		sendMessage(currentSession,sendJobj);
+		        		System.out.println("ゲーム開始処理開始");
+		        		
+		        		//ゲーム開始
+		        		ArrayList<User> ul  = currentGame.getUserList();
+		        		boolean allConnected = true;
+		        		for(int i = 0;i<ul.size();i++) {
+		        			if(ul.get(i).getSession() == null) {
+		        				allConnected = false;
+		        				System.out.println(ul.get(i) + " : " + allConnected);
+		        			}
+		        		}
+		        		System.out.println(allConnected);
+		        		if(allConnected) {
+		        			System.out.println("ネクストターン送信");
+		        			sendJobj = new JSONObject();
+		        			sendJobj.put("Result", "NEXT_TURN");
+		        			sendJobj.put("Username", currentGame.players.get(0).getUserID());
+		        			try {
+		        				Thread.sleep(500);
+		        			}catch (InterruptedException e) {		        				
+		        			}
+		        			sendMessage(currentSession,sendJobj);
+		        		}
 		        		
 		        		break;
 		        	case "RESTART_GAME":
@@ -254,6 +277,7 @@ public class AppServer implements Runnable{
 		        		//User情報は渡さなくていいの?
 		        		//そのユーザの手番かどうかはAppServerクラスが判別?
 		        		currentGame.mainProcess();
+		        		
 		        		break;
 		        	case "SELECT_ROUTE":
 		        		System.out.println("SR");
@@ -265,7 +289,7 @@ public class AppServer implements Runnable{
 		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
 		        		int route = receiveJobj.getInt("Route");
-		        		currentGame.selectRoute(currentGame.getPlayer(currentSession.getId()), route);
+		        		currentGame.selectRoute(route);
 		        		
 		        		break;
 		        	case "SEND_CHAT":
