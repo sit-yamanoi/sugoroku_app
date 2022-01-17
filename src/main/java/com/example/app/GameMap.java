@@ -40,7 +40,7 @@ public class GameMap {
 			m++;
 			
 			if(fs == 0) {
-				start = new Square(mapStr[m]);				
+				start = new Square(mapStr[m]);
 				prev = start;
 			}else {
 				forkStart = new Square(mapStr[m]);
@@ -79,5 +79,45 @@ public class GameMap {
 			
 			r++;
 		}while(m < mapStr.length);
+		show();
+	}
+	
+	void show() {
+		boolean branch = false;
+		Square main,sub;
+		sub = null;
+		main = start;
+		do {
+			//数字表示
+			if(!branch) {
+				System.out.println(main.getEfectID());
+				main = main.next0;
+			}else {
+				System.out.println(main.getEfectID() + " " + sub.getEfectID());
+				main = main.next0;
+				sub = sub.next0;
+			}
+			
+			//枝表示
+			if(!branch) {
+				if(main.next1 != null) {
+					branch = true;
+					sub = main.next1;
+					System.out.println(":\\");
+				}else {
+					System.out.println(":");
+				}
+			}else {
+				if(main.next0 == sub.next0) {
+					branch = false;
+					sub = main.next1;
+					System.out.println(":/");
+				}else {
+					System.out.println(": :");
+				}
+			}
+			
+			
+		}while(main != goal);
 	}
 }
