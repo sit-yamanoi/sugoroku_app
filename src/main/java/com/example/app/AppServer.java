@@ -156,7 +156,7 @@ public class AppServer implements Runnable{
 		        		//クライアント管理サーバーに完了を通知
 		        		sendJobj = new JSONObject();
 		        		sendJobj.put("Request", "MAKE_GAME");
-		        		sendJobj.put("LobyID",gameID);//TODO booleanのほうが良くね?
+		        		sendJobj.put("LobbyID",gameID);//TODO booleanのほうが良くね?
 		        		
 		        		sendMessage(currentSession,sendJobj);
 		        		
