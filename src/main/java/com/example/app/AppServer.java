@@ -121,6 +121,14 @@ public class AppServer implements Runnable{
 	        
 	        try {
 	        	switch(request){
+              case "CLOSE":
+                currentGame.endMatch();
+                for (User user:users) {
+                  if user.getSession() != null {
+                    Session.remove(user.getSession());
+                  }
+                }
+                Sessions.remove(session);
 		        	case "MAKE_GAME":
 		        		System.out.println("MG");
 		        		/*

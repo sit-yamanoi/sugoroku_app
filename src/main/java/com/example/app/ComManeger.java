@@ -52,7 +52,10 @@ public class ComManeger {
     @OnClose
     public void onClose(Session session) {
         System.out.println("[WebSocketServerSample] onClose:" + session.getId());
-    	Sessions.remove(session);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("Request", "CLOSE");
+        queue.addFirst(jsonObject);
+        Sessions.remove(session);
     }
 
     @OnError
