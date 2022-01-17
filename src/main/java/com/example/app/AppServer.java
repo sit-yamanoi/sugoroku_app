@@ -18,7 +18,7 @@ public class AppServer implements Runnable{
 
 	static String contextRoot = "/app";
 	static String protocol = "ws";
-	static int port = 8080;
+	static int port = 8081;
 	HashMap<String,User> userList = new HashMap<>();
 	HashMap<String,User> noConectedUsers = new HashMap<>();
 	HashMap<String,Game> gameList = new HashMap<>();
@@ -129,7 +129,7 @@ public class AppServer implements Runnable{
 		        		 * NoConectedUsersに追加
 		        		 * ゲームのインスタンスを作成
 		        		 */
-		        		String gameID = receiveJobj.getString("LobyID");	        				
+		        		String gameID = receiveJobj.getString("LobbyID");	        				
 		        		JSONArray jarUserID = receiveJobj.getJSONArray("UserList");
 		        		users = new ArrayList<>();
 		        		
@@ -155,7 +155,7 @@ public class AppServer implements Runnable{
 		        		
 		        		//クライアント管理サーバーに完了を通知
 		        		sendJobj = new JSONObject();
-		        		sendJobj.put("request", "MAKE_GAME");
+		        		sendJobj.put("Request", "MAKE_GAME");
 		        		sendJobj.put("LobyID",gameID);//TODO booleanのほうが良くね?
 		        		
 		        		sendMessage(currentSession,sendJobj);
