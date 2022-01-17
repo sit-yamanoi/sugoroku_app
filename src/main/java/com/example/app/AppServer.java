@@ -214,14 +214,7 @@ public class AppServer implements Runnable{
 		        		System.out.println(allConnected);
 		        		if(allConnected) {
 		        			System.out.println("ネクストターン送信");
-		        			sendJobj = new JSONObject();
-		        			sendJobj.put("Result", "NEXT_TURN");
-		        			sendJobj.put("Username", currentGame.players.get(0).getUserID());
-		        			try {
-		        				Thread.sleep(500);
-		        			}catch (InterruptedException e) {		        				
-		        			}
-		        			sendMessage(currentSession,sendJobj);
+		        			currentGame.takeNextTurn();
 		        		}
 		        		
 		        		break;
@@ -276,7 +269,10 @@ public class AppServer implements Runnable{
 		        		
 		        		//User情報は渡さなくていいの?
 		        		//そのユーザの手番かどうかはAppServerクラスが判別?
-		        		currentGame.mainProcess();
+		        		if(currentUser.getID() == currentGame.getNowPlayer().getUserID()) {
+		        			currentGame.mainProcess();
+		        		}
+		        		
 		        		
 		        		break;
 		        	case "SELECT_ROUTE":
@@ -288,8 +284,10 @@ public class AppServer implements Runnable{
 		        		currentUser = userList.get(currentSession.getId());
 		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
-		        		int route = receiveJobj.getInt("Route");
-		        		currentGame.selectRoute(route);
+		        		if(currentUser.getID() == currentGame.getNowPlayer().getUserID()) {
+		        			int route = receiveJobj.getInt("Route");
+		        			currentGame.selectRoute(route);
+		        		}
 		        		
 		        		break;
 		        	case "SEND_CHAT":
