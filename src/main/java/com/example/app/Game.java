@@ -1,6 +1,5 @@
 package com.example.app;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import com.example.app.items.BaseItem;
 public class Game {
 	String gameID = "";
 	ArrayList<Player> players = new ArrayList<>();
+  HashMap<String, Player> playersMap;
 	ArrayList<User> users = new ArrayList<>();
 	ArrayList<Player> rank = new ArrayList<>();
 	HashMap<String, Boolean> restart;
@@ -26,6 +26,7 @@ public class Game {
 	
 	public Game(String gID, ArrayList<User> userList){
 		this.gameID = gID;
+    this.playersMap = new HashMap<>();
 		
 		//ユーザーリストを読み込み
 		users = userList;
@@ -35,6 +36,7 @@ public class Game {
 			//プレイヤーを作成
 			Player player = new Player(user.getID());
 			this.players.add(player);
+      this.playersMap.put(user.getID(), player);
 		}
 		restart = new HashMap<>();
 		//順番を決定
@@ -223,9 +225,11 @@ public class Game {
 	void restartGame() {
 		this.players = new ArrayList<>();
 		this.restart = new HashMap<>();
+		this.playersMap = new HashMap<>();
 		for (User user: this.users) {
 			Player player = new Player(user.getID());
 			this.players.add(player);
+      this.playersMap.put(user.getID(), player);
 		}
 		//順番を決定
 		setOrder();
@@ -288,20 +292,12 @@ public class Game {
 
   void sendToAllUsers(String message) {
     this.users.forEach(user -> {
-      try {
-        user.getSession().getBasicRemote().sendText(message);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      ComManeger.sendMessage(user.getSession(), message);
     });
   }
 
   void sendToUser(User user, String message) {
-    try {
-      user.getSession().getBasicRemote().sendText(message);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    ComManeger.sendMessage(user.getSession(), message);
   }
   
   void voteRestart(String UID, boolean res) {
@@ -320,5 +316,9 @@ public class Game {
 	  }
 	  return res;
 	  
+  }
+
+  public Player getPlayer(String userID) {
+    return this.playersMap.get(userID);
   }
 }

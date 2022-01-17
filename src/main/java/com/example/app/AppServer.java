@@ -265,8 +265,7 @@ public class AppServer implements Runnable{
 		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
 		        		int route = receiveJobj.getInt("Route");
-		        		//TODO Playerの取得方法が不明
-		        		currentGame.selectRoute(null,route );
+		        		currentGame.selectRoute(currentGame.getPlayer(currentSession.getId()), route);
 		        		
 		        		break;
 		        	case "SEND_CHAT":
