@@ -37,7 +37,7 @@ public class TestGame {
 			System.out.println("dicenum:" + game.dice);
 			if(rm != 0) {
 				System.out.println("RouteSelect");
-				game.selectRoute(p, 0);
+				game.selectRoute(0);
 				
 			}
 			if(game.checkGoal() != 0) {

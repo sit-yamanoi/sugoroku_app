@@ -164,7 +164,7 @@ public class AppServer implements Runnable{
 		        		//クライアント管理サーバーに完了を通知
 		        		sendJobj = new JSONObject();
 		        		sendJobj.put("Request", "MAKE_GAME");
-		        		sendJobj.put("LobyID",gameID);//TODO booleanのほうが良くね?
+		        		sendJobj.put("LobbyID",gameID);//TODO booleanのほうが良くね?
 		        		
 		        		sendMessage(currentSession,sendJobj);
 		        		
@@ -206,8 +206,24 @@ public class AppServer implements Runnable{
 		        			userNames.put(players.get(i).getUserID());
 		        		}
 		        		
-		        		sendJobj.put("UserList",userNames);
+		        		sendJobj.put("PlayerList",userNames);
 		        		sendMessage(currentSession,sendJobj);
+		        		System.out.println("ゲーム開始処理開始");
+		        		
+		        		//ゲーム開始
+		        		ArrayList<User> ul  = currentGame.getUserList();
+		        		boolean allConnected = true;
+		        		for(int i = 0;i<ul.size();i++) {
+		        			if(ul.get(i).getSession() == null) {
+		        				allConnected = false;
+		        				System.out.println(ul.get(i) + " : " + allConnected);
+		        			}
+		        		}
+		        		System.out.println(allConnected);
+		        		if(allConnected) {
+		        			System.out.println("ネクストターン送信");
+		        			currentGame.takeNextTurn();
+		        		}
 		        		
 		        		break;
 		        	case "RESTART_GAME":
@@ -261,7 +277,11 @@ public class AppServer implements Runnable{
 		        		
 		        		//User情報は渡さなくていいの?
 		        		//そのユーザの手番かどうかはAppServerクラスが判別?
-		        		currentGame.mainProcess();
+		        		if(currentUser.getID() == currentGame.getNowPlayer().getUserID()) {
+		        			currentGame.mainProcess();
+		        		}
+		        		
+		        		
 		        		break;
 		        	case "SELECT_ROUTE":
 		        		System.out.println("SR");
@@ -272,8 +292,10 @@ public class AppServer implements Runnable{
 		        		currentUser = userList.get(currentSession.getId());
 		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
-		        		int route = receiveJobj.getInt("Route");
-		        		currentGame.selectRoute(currentGame.getPlayer(currentSession.getId()), route);
+		        		if(currentUser.getID() == currentGame.getNowPlayer().getUserID()) {
+		        			int route = receiveJobj.getInt("Route");
+		        			currentGame.selectRoute(route);
+		        		}
 		        		
 		        		break;
 		        	case "SEND_CHAT":
