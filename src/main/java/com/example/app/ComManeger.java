@@ -6,7 +6,6 @@ package com.example.app;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Queue;
 
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
@@ -16,11 +15,13 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import org.json.JSONObject;
+
 // エンドポイントは適宜変更する
 @ServerEndpoint("/app")
 public class ComManeger {
 	private static ArrayList<Session> Sessions = new ArrayList<>();
-	static Queue<Message> queue = new ArrayDeque<>();
+	static ArrayDeque<Message> queue = new ArrayDeque<>();
 	static AppServer server;
 
 	private int privateIncrementTest = 0;
@@ -52,7 +53,11 @@ public class ComManeger {
     @OnClose
     public void onClose(Session session) {
         System.out.println("[WebSocketServerSample] onClose:" + session.getId());
-    	Sessions.remove(session);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("Request", "CLOSE");
+        Message receivedMessage = new Message(jsonObject.toString(), session);
+        queue.addFirst(receivedMessage);
+        Sessions.remove(session);
     }
 
     @OnError

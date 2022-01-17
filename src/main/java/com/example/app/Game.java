@@ -113,9 +113,12 @@ public class Game {
 	    	int effect = effectResult.get("Effect");
 	    	int value = effectResult.get("Value");
 	    	//進むor戻る効果だった場合コマ移動
-	    	if (effect == 2 || effect == 3) {
-	    		remainNum = targetPlayer.move(value);
-	    	}
+			    if (effect == 2 || effect == 3) {
+				    targetPlayer.move(value);
+            if (effect == 3) {
+              value *= -1;
+            }
+			    }
 	    	jsonMap.put("NextDiceNum", remainNum);
 	    	jsonMap.put("Effect", effect);
 	    	jsonMap.put("Value", value);
@@ -169,7 +172,10 @@ public class Game {
 		    	int value = effectResult.get("Value");
 				//進むor戻る効果だった場合コマ移動
 			    if (effect == 2 || effect == 3) {
-				    remainNum = targetPlayer.move(value);
+				    targetPlayer.move(value);
+            if (effect == 3) {
+              value *= -1;
+            }
 			    }
 		    	jsonMap.put("Effect", effect);
 		    	jsonMap.put("Value", value);

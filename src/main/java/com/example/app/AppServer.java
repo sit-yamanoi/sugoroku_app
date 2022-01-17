@@ -121,6 +121,12 @@ public class AppServer implements Runnable{
 	        
 	        try {
 	        	switch(request){
+		              case "CLOSE":
+		            	currentUser = userList.get(currentSession.getId());
+		            	currentGame = gameList.get(currentUser.getGameID());
+		                currentGame.endMatch();
+		                
+		                break;
 		        	case "MAKE_GAME":
 		        		System.out.println("MG");
 		        		/*
