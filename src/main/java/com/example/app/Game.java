@@ -147,6 +147,7 @@ public class Game {
 	    //JSON用 Map 初期化
 	    Map<String, Object> jsonMap = new HashMap<String, Object>();
 	    jsonMap.put("Result", "SELECT_ROUTE");
+	    jsonMap.put("Route",way);
 	    jsonMap.put("Roll", remainNum);
 	    jsonMap.put("NextDiceNum", 0);
 	    jsonMap.put("Effect", 0);
