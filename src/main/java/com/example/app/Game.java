@@ -121,7 +121,12 @@ public class Game {
 			    }
 	    	jsonMap.put("NextDiceNum", remainNum);
 	    	jsonMap.put("Effect", effect);
-	    	jsonMap.put("Value", value);
+	    	//valueがマイナスならプラスに直して送信
+	    	if(value>0) {
+	    		jsonMap.put("Value", value);
+	    	}else {
+	    		jsonMap.put("Value", -value);
+	    	}
 	    	
 	    	if (targetPlayer.getGoalFlag()) {
 	    		this.winPlayer = targetPlayer;
