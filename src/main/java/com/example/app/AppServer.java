@@ -61,10 +61,10 @@ public class AppServer implements Runnable{
 		}
 		/*
 		 * //マップをテスト表示
-		 * 
-		 */
-		System.out.println("map show");
+		 * System.out.println("map show");
 		currentGame.map.show();
+		 */
+		
 		
 		
 		try {

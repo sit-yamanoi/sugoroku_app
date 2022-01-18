@@ -133,6 +133,7 @@ public class Game {
 	    		this.isFinished = true;
 	    	}
 	    }
+	    jsonMap.put("square",targetPlayer.getPos().getNumber());
 	    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
 	    sendToAllUsers(generateJSON(jsonMap));
 
@@ -195,6 +196,7 @@ public class Game {
 	          this.isFinished = true;
 		    	}
 	    }
+	    jsonMap.put("square",targetPlayer.getPos().getNumber());
 	    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
 	    sendToAllUsers(generateJSON(jsonMap));
 	

@@ -22,6 +22,10 @@ public class Square {
 		return effectID;
 	}
 	
+	public int getNumber() {
+		return number;
+	}
+	
 	int affectPlayer(Player p, ArrayList<Player> players, Square start) {
 		int r = 0;
 		Random random = new Random();
