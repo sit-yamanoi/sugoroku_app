@@ -57,6 +57,7 @@ public class ComManeger {
         jsonObject.put("Request", "CLOSE");
         Message receivedMessage = new Message(jsonObject.toString(), session);
         queue.addFirst(receivedMessage);
+        server.nft();
         Sessions.remove(session);
     }
 

@@ -178,7 +178,12 @@ public class Game {
             }
 			    }
 		    	jsonMap.put("Effect", effect);
-		    	jsonMap.put("Value", value);
+		    	//valueがマイナスならプラスに直して送信
+		    	if(value>0) {
+		    		jsonMap.put("Value", value);
+		    	}else {
+		    		jsonMap.put("Value", -value);
+		    	}
 		    	
 		    	if (targetPlayer.getGoalFlag()) {
 		    		this.winPlayer = targetPlayer;
@@ -232,7 +237,11 @@ public class Game {
 		//json送信処理
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("Result", "END_GAME");
-		jsonMap.put("Username", this.winPlayer.getUserID());
+		try {
+			jsonMap.put("Username", this.winPlayer.getUserID());
+		}catch(java.lang.NullPointerException e) {
+			jsonMap.put("Username", "none");
+		}
 		// JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
 		sendToAllUsers(generateJSON(jsonMap));
 	}

@@ -128,10 +128,13 @@ public class AppServer implements Runnable{
 	        try {
 	        	switch(request){
 		              case "CLOSE":
+		            	try {
+		            	System.out.println("CL");
 		            	currentUser = userList.get(currentSession.getId());
 		            	currentGame = gameList.get(currentUser.getGameID());
 		                currentGame.lineDropedEndMatch(currentUser);
 		                closeGame(currentGame);
+		            	}catch(java.lang.NullPointerException e) {}
 		                
 		                break;
 		        	case "MAKE_GAME":
