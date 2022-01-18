@@ -296,11 +296,7 @@ public class Game {
 		jsonMap.put("Result", "NEXT_TURN");
 		jsonMap.put("Username", this.players.get(this.turn).getUserID());
     // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
-		try {
-			Thread.sleep(2000);
-		}catch (InterruptedException e) {		        				
-		}
-    sendToAllUsers(generateJSON(jsonMap));
+		sendToAllUsers(generateJSON(jsonMap));
 	}
 	
 	boolean castChat(String str) {
