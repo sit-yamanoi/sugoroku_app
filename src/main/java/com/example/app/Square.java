@@ -18,7 +18,7 @@ public class Square {
 		number = n;
 	}
 	
-	int getEfectID() {
+	int getEffectID() {
 		return effectID;
 	}
 	

@@ -92,9 +92,9 @@ public class GameMap {
 		do {
 			//数字表示
 			if(!branch) {
-				System.out.println(main.getEfectID() + "\t" + count++ + "\t\t" + main.number);
+				System.out.println(main.getEffectID() + "\t" + count++ + "\t\t" + main.number);
 			}else {
-				System.out.println(main.getEfectID() + " " + sub.getEfectID() + "\t" + count++ +"\t\t" + main.number + "," + sub.number);
+				System.out.println(main.getEffectID() + " " + sub.getEffectID() + "\t" + count++ +"\t\t" + main.number + "," + sub.number);
 			}
 			
 			//枝表示

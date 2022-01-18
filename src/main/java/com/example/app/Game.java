@@ -214,7 +214,7 @@ public class Game {
 	Map<String, Integer> squareEffect(Player p) {
 		Map<String, Integer> resultMap = new HashMap<String, Integer>();
 	    Square square = p.getPos();
-	    int squareId = square.getEfectID();
+	    int squareId = square.getEffectID();
 	    resultMap.put("Effect", squareId);
 	    int effectResult = square.affectPlayer(p, this.players, this.map.getstart());
 	    this.effectDone = true;
