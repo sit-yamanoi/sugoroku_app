@@ -130,7 +130,8 @@ public class AppServer implements Runnable{
 		              case "CLOSE":
 		            	currentUser = userList.get(currentSession.getId());
 		            	currentGame = gameList.get(currentUser.getGameID());
-		                currentGame.endMatch();
+		                currentGame.lineDropedEndMatch(currentUser);
+		                closeGame(currentGame);
 		                
 		                break;
 		        	case "MAKE_GAME":
@@ -280,9 +281,13 @@ public class AppServer implements Runnable{
 		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
 		        		//User情報は渡さなくていいの?
-		        		//そのユーザの手番かどうかはAppServerクラスが判別?
+		        		//そのユーザの手番かどうかを判別
 		        		if(currentUser.getID() == currentGame.getNowPlayer().getUserID()) {
 		        			currentGame.mainProcess();
+		        		}
+		        		//ゲームが終了した場合に、ユーザ情報とゲーム情報を削除する処理
+		        		if(currentGame.isFinished) {
+		        			closeGame(currentGame);
 		        		}
 		        		
 		        		
@@ -299,6 +304,11 @@ public class AppServer implements Runnable{
 		        		if(currentUser.getID() == currentGame.getNowPlayer().getUserID()) {
 		        			int route = receiveJobj.getInt("Route");
 		        			currentGame.selectRoute(route);
+		        		}
+		        		
+		        		//ゲームが終了した場合に、ユーザ情報とゲーム情報を削除する処理
+		        		if(currentGame.isFinished) {
+		        			closeGame(currentGame);
 		        		}
 		        		
 		        		break;
@@ -336,6 +346,16 @@ public class AppServer implements Runnable{
     }
     synchronized public void nft() {
     	this.notify();
+    }
+    
+    void closeGame(Game game){
+    	for(User user : game.getUserList()) {
+    		System.out.printf("remove Users : ");
+    		userList.remove(user.getSession().getId());
+    		System.out.printf(user.getID() + " , ");
+    	}
+    	System.out.println("\nremove Game : " + game.getGameID() +"\n");
+    	gameList.remove(game.getGameID());
     }
     
     public void sendMessage(Session session,JSONObject jobj) {
