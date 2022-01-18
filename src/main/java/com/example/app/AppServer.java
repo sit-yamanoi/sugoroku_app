@@ -59,6 +59,12 @@ public class AppServer implements Runnable{
 		for(int i=0;i<4;i++) {
 			System.out.println(users.get(i));
 		}
+		/*
+		 * //マップをテスト表示
+		 * System.out.println("map show");
+		 * currentGame.map.show();
+		 */
+		
 		
 		try {
 			System.out.println("---Server Start---");
