@@ -8,8 +8,8 @@ public class GameMap {
 	int[] mapLen; //ルートの長さ [メインの長さ][分岐の長さ][分岐の長さ]の順
 	
 	GameMap(){
-		mapStr = Arrays.copyOf(MapStr.map, 98);
-		mapLen = Arrays.copyOf(MapStr.len, 3);
+		mapStr = Arrays.copyOf(MapStr.map, MapStr.map.length);
+		mapLen = Arrays.copyOf(MapStr.len, MapStr.len.length);
 		genSquare();
 	}
 	
@@ -87,15 +87,13 @@ public class GameMap {
 		Square main,sub;
 		sub = null;
 		main = start;
+		int count=0;
 		do {
 			//数字表示
 			if(!branch) {
-				System.out.println(main.getEfectID());
-				main = main.next0;
+				System.out.println(main.getEfectID() + "\t" + count++);
 			}else {
-				System.out.println(main.getEfectID() + " " + sub.getEfectID());
-				main = main.next0;
-				sub = sub.next0;
+				System.out.println(main.getEfectID() + " " + sub.getEfectID() + "\t" + count++);
 			}
 			
 			//枝表示
@@ -110,14 +108,16 @@ public class GameMap {
 			}else {
 				if(main.next0 == sub.next0) {
 					branch = false;
-					sub = main.next1;
+					sub = null;
 					System.out.println(":/");
 				}else {
+					sub = sub.next0;
 					System.out.println(": :");
 				}
 			}
+			main = main.next0;
 			
 			
-		}while(main != goal);
+		}while(main != null);
 	}
 }
