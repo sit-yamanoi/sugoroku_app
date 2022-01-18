@@ -38,19 +38,21 @@ public class GameMap {
 			m++;
 			fg = mapStr[m];
 			m++;
+			int count = 0;
 			
 			if(fs == 0) {
-				start = new Square(mapStr[m]);
+				start = new Square(mapStr[m],count++);
 				prev = start;
 			}else {
-				forkStart = new Square(mapStr[m]);
+				count = fs+1;
+				forkStart = new Square(mapStr[m],count++);
 				prev = forkStart;
 			}
 			
 			m++;
 			
 			for(j = 1; j < mapLen[r]; m++, j++) {
-				current = new Square(mapStr[m]);
+				current = new Square(mapStr[m],count++);
 				current.prev0 = prev;
 				prev.next0 = current;
 				prev = current;
@@ -90,9 +92,9 @@ public class GameMap {
 		do {
 			//数字表示
 			if(!branch) {
-				System.out.println(main.getEfectID() + "\t" + count++);
+				System.out.println(main.getEfectID() + "\t" + count++ + "\t\t" + main.number);
 			}else {
-				System.out.println(main.getEfectID() + " " + sub.getEfectID() + "\t" + count++);
+				System.out.println(main.getEfectID() + " " + sub.getEfectID() + "\t" + count++ +"\t\t" + main.number + "," + sub.number);
 			}
 			
 			//枝表示

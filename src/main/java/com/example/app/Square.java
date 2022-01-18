@@ -10,10 +10,12 @@ public class Square {
 	Square next0 = null;
 	Square next1 = null;
 	int effectID = 0; //0:何もなし 1:getItem 2:goFoward 3:backFoward 4:crewRestart 5:crewTakeItem 6:crewGiveItem 7:振り出し
+	int number;
 	
 	
-	Square(int id) {
+	Square(int id, int n) {
 		effectID = id;
+		number = n;
 	}
 	
 	int getEfectID() {
