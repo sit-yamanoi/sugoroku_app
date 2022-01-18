@@ -233,8 +233,13 @@ public class Game {
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("Result", "END_GAME");
 		jsonMap.put("Username", this.winPlayer.getUserID());
-    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
-    sendToAllUsers(generateJSON(jsonMap));
+		// JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+		sendToAllUsers(generateJSON(jsonMap));
+	}
+	
+	void lineDropedEndMatch(User user) {
+		users.remove(user);
+		endMatch();
 	}
 
 	
