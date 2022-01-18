@@ -103,6 +103,7 @@ public class Game {
 	    	jsonMap.put("NextDiceNum", remainNum);
 	    	// JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
 	    	String jsonStr = generateJSON(jsonMap);
+	    	jsonMap.put("square",targetPlayer.getPos().getNumber());
 	    	sendToAllUsers(jsonStr);
 	    	return 1;
 	    } 
