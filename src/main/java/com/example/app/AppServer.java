@@ -22,6 +22,7 @@ public class AppServer implements Runnable{
 	HashMap<String,User> userList = new HashMap<>();
 	HashMap<String,User> noConectedUsers = new HashMap<>();
 	HashMap<String,Game> gameList = new HashMap<>();
+	static Session cms = null;
 
 
     public static void main(String[] args) throws Exception {
@@ -140,6 +141,10 @@ public class AppServer implements Runnable{
 		                break;
 		        	case "MAKE_GAME":
 		        		System.out.println("MG");
+		        		//クライアント管理サーバからの初回アクセスの場合は、Sessionを登録する
+		        		if(cms == null) {
+		        			cms = currentSession;
+		        		}
 		        		/*
 		        		 * ゲームIDの重複チェック
 		        		 * ユーザのインスタンス群を作成
@@ -353,6 +358,14 @@ public class AppServer implements Runnable{
     }
     
     void closeGame(Game game){
+    	//勝者がいる場合、クライアント管理サーバに通知
+    	if(game.winPlayer.getUserID() == null) {
+    		JSONObject sendJobj = new JSONObject();
+    		sendJobj.put("Result", "END_GAME");
+			sendJobj.put("Username", game.winPlayer.getUserID());
+			sendMessage(cms,sendJobj);
+		}
+    	
     	for(User user : game.getUserList()) {
     		System.out.printf("remove Users : ");
     		userList.remove(user.getSession().getId());
