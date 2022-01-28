@@ -22,6 +22,7 @@ public class AppServer implements Runnable{
 	HashMap<String,User> userList = new HashMap<>();
 	HashMap<String,User> noConectedUsers = new HashMap<>();
 	HashMap<String,Game> gameList = new HashMap<>();
+	static Session cms = null;
 
 
     public static void main(String[] args) throws Exception {
@@ -59,6 +60,13 @@ public class AppServer implements Runnable{
 		for(int i=0;i<4;i++) {
 			System.out.println(users.get(i));
 		}
+		/*
+		 * //マップをテスト表示
+		 * System.out.println("map show");
+		currentGame.map.show();
+		 */
+		
+		
 		
 		try {
 			System.out.println("---Server Start---");
@@ -122,13 +130,21 @@ public class AppServer implements Runnable{
 	        try {
 	        	switch(request){
 		              case "CLOSE":
+		            	try {
+		            	System.out.println("CL");
 		            	currentUser = userList.get(currentSession.getId());
 		            	currentGame = gameList.get(currentUser.getGameID());
-		                currentGame.endMatch();
+		                currentGame.lineDropedEndMatch(currentUser);
+		                closeGame(currentGame);
+		            	}catch(java.lang.NullPointerException e) {}
 		                
 		                break;
 		        	case "MAKE_GAME":
 		        		System.out.println("MG");
+		        		//クライアント管理サーバからの初回アクセスの場合は、Sessionを登録する
+		        		if(cms == null) {
+		        			cms = currentSession;
+		        		}
 		        		/*
 		        		 * ゲームIDの重複チェック
 		        		 * ユーザのインスタンス群を作成
@@ -274,9 +290,13 @@ public class AppServer implements Runnable{
 		        		currentGame = gameList.get(currentUser.getGameID());
 		        		
 		        		//User情報は渡さなくていいの?
-		        		//そのユーザの手番かどうかはAppServerクラスが判別?
+		        		//そのユーザの手番かどうかを判別
 		        		if(currentUser.getID() == currentGame.getNowPlayer().getUserID()) {
 		        			currentGame.mainProcess();
+		        		}
+		        		//ゲームが終了した場合に、ユーザ情報とゲーム情報を削除する処理
+		        		if(currentGame.isFinished) {
+		        			closeGame(currentGame);
 		        		}
 		        		
 		        		
@@ -293,6 +313,11 @@ public class AppServer implements Runnable{
 		        		if(currentUser.getID() == currentGame.getNowPlayer().getUserID()) {
 		        			int route = receiveJobj.getInt("Route");
 		        			currentGame.selectRoute(route);
+		        		}
+		        		
+		        		//ゲームが終了した場合に、ユーザ情報とゲーム情報を削除する処理
+		        		if(currentGame.isFinished) {
+		        			closeGame(currentGame);
 		        		}
 		        		
 		        		break;
@@ -330,6 +355,24 @@ public class AppServer implements Runnable{
     }
     synchronized public void nft() {
     	this.notify();
+    }
+    
+    void closeGame(Game game){
+    	//勝者がいる場合、クライアント管理サーバに通知
+    	if(game.winPlayer.getUserID() == null) {
+    		JSONObject sendJobj = new JSONObject();
+    		sendJobj.put("Result", "END_GAME");
+			sendJobj.put("Username", game.winPlayer.getUserID());
+			sendMessage(cms,sendJobj);
+		}
+    	
+    	for(User user : game.getUserList()) {
+    		System.out.printf("remove Users : ");
+    		userList.remove(user.getSession().getId());
+    		System.out.printf(user.getID() + " , ");
+    	}
+    	System.out.println("\nremove Game : " + game.getGameID() +"\n");
+    	gameList.remove(game.getGameID());
     }
     
     public void sendMessage(Session session,JSONObject jobj) {

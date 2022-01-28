@@ -8,8 +8,8 @@ public class GameMap {
 	int[] mapLen; //ルートの長さ [メインの長さ][分岐の長さ][分岐の長さ]の順
 	
 	GameMap(){
-		mapStr = Arrays.copyOf(MapStr.map, 98);
-		mapLen = Arrays.copyOf(MapStr.len, 3);
+		mapStr = Arrays.copyOf(MapStr.map, MapStr.map.length);
+		mapLen = Arrays.copyOf(MapStr.len, MapStr.len.length);
 		genSquare();
 	}
 	
@@ -38,19 +38,21 @@ public class GameMap {
 			m++;
 			fg = mapStr[m];
 			m++;
+			int count = 0;
 			
 			if(fs == 0) {
-				start = new Square(mapStr[m]);
+				start = new Square(mapStr[m],count++);
 				prev = start;
 			}else {
-				forkStart = new Square(mapStr[m]);
+				count = fs+1;
+				forkStart = new Square(mapStr[m],count++);
 				prev = forkStart;
 			}
 			
 			m++;
 			
 			for(j = 1; j < mapLen[r]; m++, j++) {
-				current = new Square(mapStr[m]);
+				current = new Square(mapStr[m],count++);
 				current.prev0 = prev;
 				prev.next0 = current;
 				prev = current;
@@ -79,7 +81,6 @@ public class GameMap {
 			
 			r++;
 		}while(m < mapStr.length);
-		//show();
 	}
 	
 	void show() {
@@ -87,15 +88,13 @@ public class GameMap {
 		Square main,sub;
 		sub = null;
 		main = start;
+		int count=0;
 		do {
 			//数字表示
 			if(!branch) {
-				System.out.println(main.getEfectID());
-				main = main.next0;
+				System.out.println(main.getEffectID() + "\t" + count++ + "\t\t" + main.number);
 			}else {
-				System.out.println(main.getEfectID() + " " + sub.getEfectID());
-				main = main.next0;
-				sub = sub.next0;
+				System.out.println(main.getEffectID() + " " + sub.getEffectID() + "\t" + count++ +"\t\t" + main.number + "," + sub.number);
 			}
 			
 			//枝表示
@@ -110,14 +109,16 @@ public class GameMap {
 			}else {
 				if(main.next0 == sub.next0) {
 					branch = false;
-					sub = main.next1;
+					sub = null;
 					System.out.println(":/");
 				}else {
+					sub = sub.next0;
 					System.out.println(": :");
 				}
 			}
+			main = main.next0;
 			
 			
-		}while(main != goal);
+		}while(main != null);
 	}
 }

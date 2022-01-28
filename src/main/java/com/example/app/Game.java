@@ -108,6 +108,7 @@ public class Game {
 	    	jsonMap.put("NextDiceNum", remainNum);
 	    	// JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
 	    	String jsonStr = generateJSON(jsonMap);
+	    	jsonMap.put("square",targetPlayer.getPos().getNumber());
 	    	sendToAllUsers(jsonStr);
 	    	return 1;
 	    } 
@@ -126,13 +127,19 @@ public class Game {
 			    }
 	    	jsonMap.put("NextDiceNum", remainNum);
 	    	jsonMap.put("Effect", effect);
-	    	jsonMap.put("Value", value);
+	    	//valueがマイナスならプラスに直して送信
+	    	if(value>0) {
+	    		jsonMap.put("Value", value);
+	    	}else {
+	    		jsonMap.put("Value", -value);
+	    	}
 	    	
 	    	if (targetPlayer.getGoalFlag()) {
 	    		this.winPlayer = targetPlayer;
 	    		this.isFinished = true;
 	    	}
 	    }
+	    jsonMap.put("square",targetPlayer.getPos().getNumber());
 	    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
 	    sendToAllUsers(generateJSON(jsonMap));
 
@@ -183,13 +190,19 @@ public class Game {
             }
 			    }
 		    	jsonMap.put("Effect", effect);
-		    	jsonMap.put("Value", value);
+		    	//valueがマイナスならプラスに直して送信
+		    	if(value>0) {
+		    		jsonMap.put("Value", value);
+		    	}else {
+		    		jsonMap.put("Value", -value);
+		    	}
 		    	
 		    	if (targetPlayer.getGoalFlag()) {
 		    		this.winPlayer = targetPlayer;
 	          this.isFinished = true;
 		    	}
 	    }
+	    jsonMap.put("square",targetPlayer.getPos().getNumber());
 	    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
 	    sendToAllUsers(generateJSON(jsonMap));
 	
@@ -207,7 +220,7 @@ public class Game {
 	Map<String, Integer> squareEffect(Player p) {
 		Map<String, Integer> resultMap = new HashMap<String, Integer>();
 	    Square square = p.getPos();
-	    int squareId = square.getEfectID();
+	    int squareId = square.getEffectID();
 	    resultMap.put("Effect", squareId);
 	    int effectResult = square.affectPlayer(p, this.players, this.map.getstart());
 	    this.effectDone = true;
@@ -227,9 +240,18 @@ public class Game {
 		//json送信処理
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("Result", "END_GAME");
-		jsonMap.put("Username", this.winPlayer.getUserID());
-    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
-    sendToAllUsers(generateJSON(jsonMap));
+		try {
+			jsonMap.put("Username", this.winPlayer.getUserID());
+		}catch(java.lang.NullPointerException e) {
+			jsonMap.put("Username", "none");
+		}
+		// JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+		sendToAllUsers(generateJSON(jsonMap));
+	}
+	
+	void lineDropedEndMatch(User user) {
+		users.remove(user);
+		endMatch();
 	}
 
 	void takeNextTurn() {
@@ -242,11 +264,7 @@ public class Game {
 		jsonMap.put("Result", "NEXT_TURN");
 		jsonMap.put("Username", this.players.get(this.turn).getUserID());
     // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
-		try {
-			Thread.sleep(2000);
-		}catch (InterruptedException e) {		        				
-		}
-    sendToAllUsers(generateJSON(jsonMap));
+		sendToAllUsers(generateJSON(jsonMap));
 	}
 	
 	int checkGoal() {
