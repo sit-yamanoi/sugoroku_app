@@ -8,8 +8,6 @@ import java.util.Random;
 
 import org.json.JSONObject;
 
-import com.example.app.items.BaseItem;
-
 public class Game {
 	String gameID = "";
 	ArrayList<Player> players = new ArrayList<>();
@@ -62,11 +60,18 @@ public class Game {
 	ArrayList<Player> getPlayerList() {
 		return players;
 	}
+
+  public Player getPlayer(String userID) {
+    return this.playersMap.get(userID);
+  }
 	
 	Player getNowPlayer() {
+    if (this.turn < 0) {
+      return null;
+    }
 		return players.get(turn);
 	}
-	
+
 	ArrayList<User> getUserList() {
 		return users;
 	}
@@ -218,16 +223,6 @@ public class Game {
 		return result;
 	}
 	
-	void useItem(Player p, int pos, int value) {
-		BaseItem item = p.getItem(pos);
-		item.use(value, p, this.players);
-		p.deleteItem(pos);
-	}
-	
-	void displayResult() {
-		//json送信処理
-	}
-	
 	void endMatch() {
 		//json送信処理
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -237,33 +232,6 @@ public class Game {
     sendToAllUsers(generateJSON(jsonMap));
 	}
 
-	
-	void restartGame() {
-		this.players = new ArrayList<>();
-		this.restart = new HashMap<>();
-		this.playersMap = new HashMap<>();
-		for (User user: this.users) {
-			Player player = new Player(user.getID());
-			this.players.add(player);
-      this.playersMap.put(user.getID(), player);
-		}
-		//順番を決定
-		setOrder();
-		
-		//map初期化
-		this.map = new GameMap();
-		this.turn = 0;
-		this.winPlayer = null;
-
-		
-		
-		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		jsonMap.put("Result", "RESTART_GAME");
-		jsonMap.put("Status", true);
-    // JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
-    sendToAllUsers(generateJSON(jsonMap));
-	}
-	
 	void takeNextTurn() {
 		if(this.turn == this.players.size() - 1)   {
 			this.turn = 0 ;
@@ -281,15 +249,6 @@ public class Game {
     sendToAllUsers(generateJSON(jsonMap));
 	}
 	
-	boolean castChat(String str) {
-		return true;
-	}
-	
-	void addRank(Player player) {
-		this.rank.add(player);
-	}
-
-	//TODO テスト用
 	int checkGoal() {
 		int g = 0;
 		for(Player p : players) {
@@ -300,7 +259,6 @@ public class Game {
 		return g;
 	}
 
-
   boolean getIsFinished() {
     return this.isFinished;
   }
@@ -310,24 +268,24 @@ public class Game {
     return jo.toString();
   }
 
+  /*
+    void sendToAllUsers(String message) {
+      this.users.forEach(user -> {
+        ComManeger.sendMessage(user.getSession(), message);
+      });
+    }
+
+   */
   void sendToAllUsers(String message) {
     this.users.forEach(user -> {
-      ComManeger.sendMessage(user.getSession(), message);
+      System.out.println(message);
     });
   }
 
   void sendToUser(User user, String message) {
-    ComManeger.sendMessage(user.getSession(), message);
+	  ComManeger.sendMessage(user.getSession(), message);
   }
   
-  void voteRestart(String UID, boolean res) {
-	  if(!restart.containsKey(UID)) {
-		  restart.put(UID, true);
-	  }
-	  if(restart.size() == players.size()) {
-		  restartGame();
-	  }
-  }
   public String toString() {
 	  String res;
 	  res = gameID;
@@ -336,9 +294,5 @@ public class Game {
 	  }
 	  return res;
 	  
-  }
-
-  public Player getPlayer(String userID) {
-    return this.playersMap.get(userID);
   }
 }

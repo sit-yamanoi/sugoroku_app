@@ -79,7 +79,7 @@ public class GameMap {
 			
 			r++;
 		}while(m < mapStr.length);
-		show();
+		//show();
 	}
 	
 	void show() {
