@@ -244,6 +244,28 @@ public class Game {
 			jsonMap.put("Username", this.winPlayer.getUserID());
 		}catch(java.lang.NullPointerException e) {
 			jsonMap.put("Username", "none");
+<<<<<<< HEAD
+=======
+		}
+		// JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
+		sendToAllUsers(generateJSON(jsonMap));
+	}
+	
+	void lineDropedEndMatch(User user) {
+		users.remove(user);
+		endMatch();
+	}
+
+	
+	void restartGame() {
+		this.players = new ArrayList<>();
+		this.restart = new HashMap<>();
+		this.playersMap = new HashMap<>();
+		for (User user: this.users) {
+			Player player = new Player(user.getID());
+			this.players.add(player);
+      this.playersMap.put(user.getID(), player);
+>>>>>>> a35b147310e85ea3039d3b33d79f7afd576b0fd7
 		}
 		// JSON送信部分(JSON送信用関数にjsonMapを渡してJSON Objectを生成)
 		sendToAllUsers(generateJSON(jsonMap));
@@ -286,19 +308,20 @@ public class Game {
     return jo.toString();
   }
 
-  /*
-    void sendToAllUsers(String message) {
-      this.users.forEach(user -> {
-        ComManeger.sendMessage(user.getSession(), message);
-      });
-    }
+  void sendToAllUsers(String message) {
+    this.users.forEach(user -> {
+      ComManeger.sendMessage(user.getSession(), message);
+    });
+  }
 
-   */
+  //テスト用
+  /*
   void sendToAllUsers(String message) {
     this.users.forEach(user -> {
       System.out.println(message);
     });
   }
+  */
 
   void sendToUser(User user, String message) {
 	  ComManeger.sendMessage(user.getSession(), message);
